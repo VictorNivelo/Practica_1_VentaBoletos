@@ -16,7 +16,7 @@ public class Pasajero {
     private String ApellidoPasajero;
     private String NumeroTelefono;
     private Integer EdadPasajero;
-
+    
     public Pasajero() {
         
     }
