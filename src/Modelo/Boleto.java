@@ -12,35 +12,35 @@ import java.util.Date;
  */
 public class Boleto {
     private Integer idBoleto;
-    private Date FechaSalida;
-    private Integer HoraSalida;
-    private Date FechaCompra;
     private String Origen;
     private String Destino;
-    private Integer NumeroAsiento;
     private String CantidadBoletos;
+    private String FechaSalida;
+    private String HoraSalida;
+    private String FechaCompra;
+    private Integer NumeroAsiento;
     private Float PrecioUnitario;
-    private Float PrecioFinal;
     private Integer Iva;
     private Float Descuento;
+    private Float PrecioFinal;
 
     public Boleto() {
         
     }
 
-    public Boleto(Integer idBoleto, Date FechaSalida, Integer HoraSalida, Date FechaCompra, String Origen, String Destino, Integer NumeroAsiento, String CantidadBoletos, Float PrecioUnitario, Float PrecioFinal, Integer Iva, Float Descuento) {
+    public Boleto(Integer idBoleto, String Origen, String Destino, String CantidadBoletos, String FechaSalida, String HoraSalida, String FechaCompra, Integer NumeroAsiento, Float PrecioUnitario, Integer Iva, Float Descuento, Float PrecioFinal) {
         this.idBoleto = idBoleto;
+        this.Origen = Origen;
+        this.Destino = Destino;
+        this.CantidadBoletos = CantidadBoletos;
         this.FechaSalida = FechaSalida;
         this.HoraSalida = HoraSalida;
         this.FechaCompra = FechaCompra;
-        this.Origen = Origen;
-        this.Destino = Destino;
         this.NumeroAsiento = NumeroAsiento;
-        this.CantidadBoletos = CantidadBoletos;
         this.PrecioUnitario = PrecioUnitario;
-        this.PrecioFinal = PrecioFinal;
         this.Iva = Iva;
         this.Descuento = Descuento;
+        this.PrecioFinal = PrecioFinal;
     }
 
     public Integer getIdBoleto() {
@@ -51,27 +51,27 @@ public class Boleto {
         this.idBoleto = idBoleto;
     }
 
-    public Date getFechaSalida() {
+    public String getFechaSalida() {
         return FechaSalida;
     }
 
-    public void setFechaSalida(Date FechaSalida) {
+    public void setFechaSalida(String FechaSalida) {
         this.FechaSalida = FechaSalida;
     }
 
-    public Integer getHoraSalida() {
+    public String getHoraSalida() {
         return HoraSalida;
     }
 
-    public void setHoraSalida(Integer HoraSalida) {
+    public void setHoraSalida(String HoraSalida) {
         this.HoraSalida = HoraSalida;
     }
 
-    public Date getFechaCompra() {
+    public String getFechaCompra() {
         return FechaCompra;
     }
 
-    public void setFechaCompra(Date FechaCompra) {
+    public void setFechaCompra(String FechaCompra) {
         this.FechaCompra = FechaCompra;
     }
 
@@ -137,6 +137,11 @@ public class Boleto {
 
     public void setDescuento(Float Descuento) {
         this.Descuento = Descuento;
+    }
+
+    @Override
+    public String toString() {
+        return "Boleto{" + "idBoleto=" + idBoleto + ", Origen=" + Origen + ", Destino=" + Destino + ", CantidadBoletos=" + CantidadBoletos + ", FechaSalida=" + FechaSalida + ", HoraSalida=" + HoraSalida + ", FechaCompra=" + FechaCompra + ", NumeroAsiento=" + NumeroAsiento + ", PrecioUnitario=" + PrecioUnitario + ", Iva=" + Iva + ", Descuento=" + Descuento + ", PrecioFinal=" + PrecioFinal + '}';
     }
     
 }

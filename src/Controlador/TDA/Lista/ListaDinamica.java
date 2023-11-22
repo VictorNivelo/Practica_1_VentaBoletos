@@ -46,37 +46,37 @@ public class ListaDinamica <E>{
         }
     }
     
-    public void AgregarFinal(E info) {
-        Nodo<E> Ayuda = new Nodo<>(info, null);
-        if (EstaVacio()) {
-            this.cabezera = Ayuda;
-        } 
-        else {
-            Nodo<E> aux = cabezera;
-            while (aux.getSiguiente() != null) {
-                aux = aux.getSiguiente();
-            }
-            aux.setSiguiente(Ayuda);
-        }
-        Longitud++;
-    }
-    
-//    public void AgregarFinal(E info){
-//        Nodo<E> Ayuda;
-//        if(EstaVacio()){
-//            AgregarCabeza(info);
-////            Ayuda = new Nodo<>(info);
-////            cabezera = Ayuda;
-////            ultimo = Ayuda;
-////            Longitud++;
+//    public void AgregarFinal(E info) {
+//        Nodo<E> Ayuda = new Nodo<>(info, null);
+//        if (EstaVacio()) {
+//            this.cabezera = Ayuda;
+//        } 
+//        else {
+//            Nodo<E> aux = cabezera;
+//            while (aux.getSiguiente() != null) {
+//                aux = aux.getSiguiente();
+//            }
+//            aux.setSiguiente(Ayuda);
 //        }
-//        else{
-//            Ayuda = new Nodo<>(info, null);
-//            ultimo.setSiguiente(Ayuda);
+//        Longitud++;
+//    }
+    
+    public void AgregarFinal(E info){
+        Nodo<E> Ayuda;
+        if(EstaVacio()){
+            AgregarCabeza(info);
+//            Ayuda = new Nodo<>(info);
+//            cabezera = Ayuda;
 //            ultimo = Ayuda;
 //            Longitud++;
-//        }
-//    }
+        }
+        else{
+            Ayuda = new Nodo<>(info, null);
+            ultimo.setSiguiente(Ayuda);
+            ultimo = Ayuda;
+            Longitud++;
+        }
+    }
     
     private E ObtenerPrimero() throws EstaVacia{
         if(EstaVacio()){
