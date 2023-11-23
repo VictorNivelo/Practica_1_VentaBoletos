@@ -55,7 +55,6 @@
                       <Component id="PanelRegistroVentas" max="32767" attributes="0"/>
                       <Component id="jLabel2" alignment="0" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="32767" attributes="0"/>
                           <Component id="jButton2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jButton1" min="-2" max="-2" attributes="0"/>
@@ -134,7 +133,6 @@
                               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="cbxDestino" alignment="0" pref="295" max="32767" attributes="0"/>
-                                  <Component id="spnCantidadBoileros" alignment="0" max="32767" attributes="0"/>
                                   <Component id="txtFechaSalida" alignment="0" max="32767" attributes="0"/>
                                   <Component id="cbxHoraSalida" alignment="0" max="32767" attributes="0"/>
                                   <Component id="txtNumeroAsientos" alignment="0" max="32767" attributes="0"/>
@@ -142,6 +140,7 @@
                                   <Component id="txtPrecioFinal" alignment="0" max="32767" attributes="0"/>
                                   <Component id="txtDescuento" max="32767" attributes="0"/>
                                   <Component id="cbxOrigen" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="txtCantidadBoletos" alignment="0" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -167,7 +166,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="spnCantidadBoileros" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="txtCantidadBoletos" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -175,9 +174,9 @@
                           <Component id="txtFechaSalida" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="cbxHoraSalida" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -279,8 +278,6 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Cantidad de boletos"/>
               </Properties>
-            </Component>
-            <Component class="javax.swing.JSpinner" name="spnCantidadBoileros">
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel5">
               <Properties>
@@ -405,6 +402,11 @@
                 <Property name="text" type="java.lang.String" value="INFORMACION BOLETO"/>
               </Properties>
             </Component>
+            <Component class="javax.swing.JTextField" name="txtCantidadBoletos">
+              <Properties>
+                <Property name="horizontalAlignment" type="int" value="11"/>
+              </Properties>
+            </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel4">
@@ -495,10 +497,12 @@
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel18" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel21" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel23" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jLabel22" alignment="0" min="-2" pref="16" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="jLabel21" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel23" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -558,10 +562,7 @@
             <Component class="javax.swing.JComboBox" name="cbxTipoDni">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="2">
-                    <StringItem index="0" value="Cedula"/>
-                    <StringItem index="1" value="Pasaporte"/>
-                  </StringArray>
+                  <StringArray count="0"/>
                 </Property>
               </Properties>
               <AuxValues>
@@ -702,6 +703,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="MODIFICAR SELECCIONADA"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton3ActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

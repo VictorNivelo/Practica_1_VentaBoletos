@@ -1,0 +1,1 @@
+{"Controlador.TDA.Lista.ListaDinamica":{"cabezera":{"info":{"@class":"Modelo.TipoDNI","idDni":1,"NombreDNI":"Cedula","DescripcionDni":"Es un ciudadano"},"Siguiente":{"info":{"@class":"Modelo.TipoDNI","idDni":2,"NombreDNI":"Pasaporte","DescripcionDni":"Es un extrangero"}}},"ultimo":{"@reference":"..\/cabezera\/Siguiente"},"Longitud":2}}

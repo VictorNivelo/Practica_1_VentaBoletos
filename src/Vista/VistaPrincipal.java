@@ -4,12 +4,14 @@
  */
 package Vista;
 
-import Controlador.PasajeroControlador;
-import Controlador.TDA.Lista.Exepciones.EstaVacia;
+import Controlador.TDA.Lista.Exepciones.ListaVacia;
 import Controlador.TDA.Lista.ListaDinamica;
 import Modelo.Boleto;
+import Modelo.Dao.PasajeroDao;
 import Modelo.Pasajero;
+import Modelo.TipoDNI;
 import Vista.Modelo.ModeloTablaVenta;
+import Vista.Util.UtilLista;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -21,20 +23,21 @@ import javax.swing.JOptionPane;
 public class VistaPrincipal extends javax.swing.JFrame {
     
     private ModeloTablaVenta mtv = new ModeloTablaVenta();
-    private PasajeroControlador PasajeroControl = new PasajeroControlador();
+    private PasajeroDao pasajeroControlDao = new PasajeroDao();
     private ListaDinamica<Pasajero> ListaPasajero = new ListaDinamica<>();
 
     /**
      * Creates new form VistaPrincipal
      */
-    public VistaPrincipal() {
+    public VistaPrincipal() throws ListaVacia {
         initComponents();
         this.setLocationRelativeTo(null);
+        UtilLista.cargarComboTipoDni(cbxTipoDni);
         CargarTabla();
     }
     
     private void CargarTabla() {
-        mtv.setPasajerosTabla(PasajeroControl.getListaPasajeros());
+        mtv.setPasajerosTabla(pasajeroControlDao.getListaPasajeros());
         tblVentas.setModel(mtv);
         tblVentas.updateUI();
     }
@@ -43,13 +46,30 @@ public class VistaPrincipal extends javax.swing.JFrame {
         return (!txtNombre.getText().trim().isEmpty() && !txtApellido.getText().trim().isEmpty() && !txtNumeroDNI.getText().trim().isEmpty());
         
     }
+    private void Limpiar() throws ListaVacia {
+        txtApellido.setText("");
+        txtNombre.setText("");
+        txtNumeroDNI.setText("");
+        txtNumeroAsientos.setText("");
+        cbxTipoDni.setSelectedIndex(-1);
+        cbxOrigen.setSelectedIndex(-1);
+        cbxDestino.setSelectedIndex(-1);
+        cbxHoraSalida.setSelectedIndex(-1);
+        txtTelefono.setText("");
+        txtFechaSalida.setText("");
+        txtPrecioFinal.setText("");
+        txtPrecioUnitario.setText("");
+        pasajeroControlDao.setPasajero(null);
+        CargarTabla();
+
+    }
     
-    private void Guardar() throws EstaVacia{
+    private void Guardar() throws ListaVacia{
         if(Validar()){
             Integer IdPersona = ListaPasajero.getLongitud()+1;
             String Origen = cbxOrigen.getSelectedItem().toString();
             String Destino = cbxDestino.getSelectedItem().toString();
-            String CantidadBoleto = spnCantidadBoileros.getName();
+            String CantidadBoleto = txtCantidadBoletos.getText();
             String FechaSalida = txtFechaSalida.getText();
             String HoraSalida = cbxHoraSalida.getSelectedItem().toString();
             String FechaCompra = txtFechaSalida.getText();
@@ -57,31 +77,62 @@ public class VistaPrincipal extends javax.swing.JFrame {
             
             Boleto BoletoPasajero = new Boleto(IdPersona, Origen, Destino, CantidadBoleto, FechaSalida, HoraSalida, FechaCompra, NumeroAsientos, 10.0f, 14, 10.0f, 10.0f);
                     
-            PasajeroControl.getPasajeroControl().setIdPersona(IdPersona);
-            PasajeroControl.getPasajeroControl().setTipoDni(cbxTipoDni.getSelectedItem().toString());
-            PasajeroControl.getPasajeroControl().setNumeroDni(txtNumeroDNI.getText());
-            PasajeroControl.getPasajeroControl().setNombrePasajero(txtNombre.getText());
-            PasajeroControl.getPasajeroControl().setApellidoPasajero(txtApellido.getText());
-            PasajeroControl.getPasajeroControl().setNumeroTelefono(txtTelefono.getText());
-            PasajeroControl.getPasajeroControl().setEdadPasajero(1);
-            PasajeroControl.getPasajeroControl().setBoletoPasajero(BoletoPasajero);
+            pasajeroControlDao.getPasajero().setIdPersona(IdPersona);
             
-
-            if(PasajeroControl.Guardar()){
-                JOptionPane.showMessageDialog(null, "Datos guardados", "Informacion", JOptionPane.INFORMATION_MESSAGE);
-//                personaControl.setPersona(null);
+            pasajeroControlDao.getPasajero().setTipoDni(UtilLista.obtenerTipoDniControl(cbxTipoDni));
+            
+            pasajeroControlDao.getPasajero().setNumeroDni(txtNumeroDNI.getText());
+            pasajeroControlDao.getPasajero().setNombrePasajero(txtNombre.getText());
+            pasajeroControlDao.getPasajero().setApellidoPasajero(txtApellido.getText());
+            pasajeroControlDao.getPasajero().setNumeroTelefono(txtTelefono.getText());
+            pasajeroControlDao.getPasajero().setEdadPasajero(1);
+            
+            pasajeroControlDao.getPasajero().setBoletoPasajero(BoletoPasajero);
+            
+//            if(PasajeroControl.Guardar()){
+            if(pasajeroControlDao.Persist()){
+                JOptionPane.showMessageDialog(null, "Boleto comprado", "Informacion", JOptionPane.INFORMATION_MESSAGE);
                 CargarTabla();
                 
-                PasajeroControl.Imprimir();
+                pasajeroControlDao.setPasajero(null);
             }
             else{
-                JOptionPane.showMessageDialog(null, "No se pudo guardar", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "No se pudo comprar", "Informacion", JOptionPane.INFORMATION_MESSAGE);
             }
         }
         else{
             JOptionPane.showMessageDialog(null, "Falta llenar campos", "Error", JOptionPane.ERROR_MESSAGE);
         }
-//        Limpiar();
+        Limpiar();
+    }
+    
+    private void CargarVista(){
+        int fila = tblVentas.getSelectedRow();
+        if(fila < 0){
+            JOptionPane.showMessageDialog(null, "Escoga un registro");
+        }
+        else{
+            try {
+                pasajeroControlDao.setPasajero(mtv.getPasajerosTabla().getInfo(fila));
+                
+                txtNombre.setText(pasajeroControlDao.getPasajero().getNombrePasajero());
+                txtApellido.setText(pasajeroControlDao.getPasajero().getApellidoPasajero());
+                txtNumeroDNI.setText(pasajeroControlDao.getPasajero().getNumeroDni());
+                txtTelefono.setText(pasajeroControlDao.getPasajero().getNumeroTelefono());
+                
+                cbxTipoDni.setSelectedIndex(pasajeroControlDao.getPasajero().getTipoDni().getIdDni()-1);
+                
+//                txtCorreo.setText(pasajeroControlDao.getPasajero().getPersonaCuenta().getCorreo());
+//                txtContrasena.setText(pasajeroControlDao.getPasajero().getPersonaCuenta().getContrasena());
+//                cbxRol.setSelectedIndex(pasajeroControlDao.getPasajero().getRolPersona().getId_rol()-1);
+                
+//                cbxTipoIdentificacion.setSelectedIndex(personaControl.getPersona().getTipoDNI());
+//                cbxTipoIdentificacion.setSelectedIndex(personaControl.getPersona().getTipoDNI());
+            } 
+            catch (Exception e) {
+                
+            }
+        }
     }
 
     /**
@@ -102,7 +153,6 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         cbxDestino = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
-        spnCantidadBoileros = new javax.swing.JSpinner();
         jLabel5 = new javax.swing.JLabel();
         txtFechaSalida = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
@@ -116,6 +166,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
         txtPrecioFinal = new javax.swing.JTextField();
         txtDescuento = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
+        txtCantidadBoletos = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
@@ -193,6 +244,8 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jLabel20.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel20.setText("INFORMACION BOLETO");
 
+        txtCantidadBoletos.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -215,14 +268,14 @@ public class VistaPrincipal extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(cbxDestino, 0, 295, Short.MAX_VALUE)
-                            .addComponent(spnCantidadBoileros)
                             .addComponent(txtFechaSalida)
                             .addComponent(cbxHoraSalida, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtNumeroAsientos)
                             .addComponent(txtPrecioUnitario)
                             .addComponent(txtPrecioFinal)
                             .addComponent(txtDescuento)
-                            .addComponent(cbxOrigen, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(cbxOrigen, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtCantidadBoletos))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -241,15 +294,15 @@ public class VistaPrincipal extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(spnCantidadBoileros, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtCantidadBoletos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(10, 10, 10)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(txtFechaSalida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(cbxHoraSalida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cbxHoraSalida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
@@ -288,8 +341,6 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jLabel18.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel18.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel18.setText("Fecha nacimineto");
-
-        cbxTipoDni.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Cedula", "Pasaporte" }));
 
         jLabel21.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel21.setText("Dia");
@@ -365,10 +416,11 @@ public class VistaPrincipal extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel18)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel21)
-                    .addComponent(jLabel23)
-                    .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel21)
+                        .addComponent(jLabel23)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cbxDiaFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -401,6 +453,11 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jScrollPane1.setViewportView(tblVentas);
 
         jButton3.setText("MODIFICAR SELECCIONADA");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout PanelRegistroVentasLayout = new javax.swing.GroupLayout(PanelRegistroVentas);
         PanelRegistroVentas.setLayout(PanelRegistroVentasLayout);
@@ -438,7 +495,6 @@ public class VistaPrincipal extends javax.swing.JFrame {
                     .addComponent(PanelRegistroVentas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1))
@@ -487,7 +543,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
             Integer IdPersona = ListaPasajero.getLongitud()+1;
             String Origen = cbxOrigen.getSelectedItem().toString();
             String Destino = cbxDestino.getSelectedItem().toString();
-            String CantidadBoleto = spnCantidadBoileros.getName();
+            String CantidadBoleto = txtCantidadBoletos.getName();
             String FechaSalida = txtFechaSalida.getText();
             String HoraSalida = cbxHoraSalida.getSelectedItem().toString();
             String FechaCompra = txtFechaSalida.getText();
@@ -495,13 +551,13 @@ public class VistaPrincipal extends javax.swing.JFrame {
             
             Boleto BoletoPasajero = new Boleto(IdPersona, Origen, Destino, CantidadBoleto, FechaSalida, HoraSalida, FechaCompra, NumeroAsientos, 10.0f, 14, 10.0f, 10.0f);
             
-            String TipoDNI = cbxTipoDni.getSelectedItem().toString();
+            TipoDNI tipoDNI = UtilLista.obtenerTipoDniControl(cbxTipoDni);
             String NumeroDNI = txtNumeroDNI.getText();
             String NombrePasajero = txtNombre.getText();
             String ApellidoPasajero = txtApellido.getText();
             String NumeroTelefono = txtTelefono.getText();
             
-            Pasajero PasajeroGuardar = new Pasajero(IdPersona, TipoDNI, NumeroDNI, NombrePasajero, ApellidoPasajero, NumeroTelefono, 20, BoletoPasajero);
+            Pasajero PasajeroGuardar = new Pasajero(IdPersona, tipoDNI, NumeroDNI, NombrePasajero, ApellidoPasajero, NumeroTelefono, 20, BoletoPasajero);
             
             ListaPasajero.Agregar(PasajeroGuardar);
             
@@ -509,10 +565,15 @@ public class VistaPrincipal extends javax.swing.JFrame {
             
             System.out.println(""+ListaPasajero);
         } 
-        catch (EstaVacia ex) {
+        catch (ListaVacia ex) {
             Logger.getLogger(VistaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        CargarVista();
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -544,7 +605,11 @@ public class VistaPrincipal extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new VistaPrincipal().setVisible(true);
+                try {
+                    new VistaPrincipal().setVisible(true);
+                } catch (ListaVacia ex) {
+                    Logger.getLogger(VistaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
@@ -588,9 +653,9 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSpinner spnCantidadBoileros;
     private javax.swing.JTable tblVentas;
     private javax.swing.JTextField txtApellido;
+    private javax.swing.JTextField txtCantidadBoletos;
     private javax.swing.JTextField txtDescuento;
     private javax.swing.JTextField txtFechaSalida;
     private javax.swing.JTextField txtNombre;

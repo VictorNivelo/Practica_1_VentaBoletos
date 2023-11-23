@@ -16,14 +16,19 @@ public class PasajeroControlador {
     private Pasajero pasajeroControl;
     
     public PasajeroControlador() {
-        this.ListaPasajeros  = new ListaDinamica<>();
+        
+    }
+    
+    public PasajeroControlador(Integer tamano) {
+     this.ListaPasajeros  = new ListaDinamica<>();   
     }
     
     public Boolean Guardar(){
         Integer pos = VerificarPosicion();
         if (pos > -1) {
-            pasajeroControl.setIdPersona(pos + 1);
-            ListaPasajeros.Agregar(pasajeroControl);
+            pasajeroControl.setIdPersona(pos+1);
+            ListaPasajeros.getCabezera();
+//            MatrizPersona[VerificarPosicion()] = persona;
             return true;
         } 
         else {

@@ -10,7 +10,7 @@ package Modelo;
  */
 public class Pasajero {
     private Integer idPersona;
-    private String TipoDni;
+    private TipoDNI TipoDni;
     private String NumeroDni;
     private String NombrePasajero;
     private String ApellidoPasajero;
@@ -22,7 +22,7 @@ public class Pasajero {
         
     }
 
-    public Pasajero(Integer idPersona, String TipoDni, String NumeroDni, String NombrePasajero, String ApellidoPasajero, String NumeroTelefono, Integer EdadPasajero, Boleto boletoPasajero) {
+    public Pasajero(Integer idPersona, TipoDNI TipoDni, String NumeroDni, String NombrePasajero, String ApellidoPasajero, String NumeroTelefono, Integer EdadPasajero, Boleto boletoPasajero) {
         this.idPersona = idPersona;
         this.TipoDni = TipoDni;
         this.NumeroDni = NumeroDni;
@@ -41,11 +41,11 @@ public class Pasajero {
         this.idPersona = idPersona;
     }
 
-    public String getTipoDni() {
+    public TipoDNI getTipoDni() {
         return TipoDni;
     }
 
-    public void setTipoDni(String TipoDni) {
+    public void setTipoDni(TipoDNI TipoDni) {
         this.TipoDni = TipoDni;
     }
 
@@ -96,7 +96,8 @@ public class Pasajero {
     public void setBoletoPasajero(Boleto boletoPasajero) {
         this.boletoPasajero = boletoPasajero;
     }
-
+    
+    
     @Override
     public String toString() {
         return "Pasajero{" + "idPersona=" + idPersona + ", TipoDni=" + TipoDni + ", NumeroDni=" + NumeroDni + ", NombrePasajero=" + NombrePasajero + ", ApellidoPasajero=" + ApellidoPasajero + ", NumeroTelefono=" + NumeroTelefono + ", EdadPasajero=" + EdadPasajero + ", boletoPasajero=" + boletoPasajero + '}';

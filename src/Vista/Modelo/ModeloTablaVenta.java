@@ -4,7 +4,7 @@
  */
 package Vista.Modelo;
 
-import Controlador.TDA.Lista.Exepciones.EstaVacia;
+import Controlador.TDA.Lista.Exepciones.ListaVacia;
 import Controlador.TDA.Lista.ListaDinamica;
 import Modelo.Pasajero;
 import javax.swing.table.AbstractTableModel;
@@ -40,55 +40,59 @@ public class ModeloTablaVenta extends AbstractTableModel {
     @Override
     public Object getValueAt(int Fila, int Columna) {
 
-        Pasajero p = null;
         try {
-            pasajerosTabla.obtener(Fila);
-        } 
-        catch (EstaVacia ex) {
-            
-        } 
+            Pasajero p = pasajerosTabla.getInfo(Fila);
 
-        switch (Columna) {
-            case 0:
-                return (p != null) ? p.getIdPersona() : "";
-            case 1:
-                return (p != null) ? p.getTipoDni() : "";
-            case 2:
-                return (p != null) ? p.getNumeroDni() : "";
-            case 3:
-                return (p != null) ? p.getNombrePasajero() : "";
-            case 4:
-                return (p != null) ? p.getApellidoPasajero() : "";
-            case 5:
-                return (p != null) ? p.getNumeroTelefono() : "";
-            case 6:
-                return (p != null) ? p.getEdadPasajero() : "";
-            case 7:
-                return (p != null) ? p.getBoletoPasajero().getOrigen() : "";
-            case 8:
-                return (p != null) ? p.getBoletoPasajero().getDestino() : "";
-            case 9:
-                return (p != null) ? p.getBoletoPasajero().getCantidadBoletos() : "";
-            case 10:
-                return (p != null) ? p.getBoletoPasajero().getFechaCompra() : "";
-            case 11:
-                return (p != null) ? p.getBoletoPasajero().getFechaSalida() : "";
-            case 12:
-                return (p != null) ? p.getBoletoPasajero().getHoraSalida() : "";
-            case 13:
-                return (p != null) ? p.getBoletoPasajero().getNumeroAsiento() : "";
-            case 14:
-                return (p != null) ? p.getBoletoPasajero().getPrecioUnitario() : "";
-            case 15:
-                return (p != null) ? p.getBoletoPasajero().getDescuento() : "";
-            case 16:
-                return (p != null) ? p.getBoletoPasajero().getPrecioFinal() : "";
+            switch (Columna) {
+                case 0:
+                    return (p != null) ? p.getIdPersona() : "";
+                case 1:
+                    return (p != null) ? p.getTipoDni() : "";
+                case 2:
+                    return (p != null) ? p.getNumeroDni() : "";
+                case 3:
+                    return (p != null) ? p.getNombrePasajero() : "";
+                case 4:
+                    return (p != null) ? p.getApellidoPasajero() : "";
+                case 5:
+                    return (p != null) ? p.getNumeroTelefono() : "";
+                case 6:
+                    return (p != null) ? p.getEdadPasajero() : "";
+                case 7:
+                    return (p != null) ? p.getBoletoPasajero().getOrigen() : "";
+                case 8:
+                    return (p != null) ? p.getBoletoPasajero().getDestino() : "";
+                case 9:
+                    return (p != null) ? p.getBoletoPasajero().getCantidadBoletos(): "";
+                case 10:
+                    return (p != null) ? p.getBoletoPasajero().getFechaCompra() : "";
+                case 11:
+                    return (p != null) ? p.getBoletoPasajero().getFechaSalida() : "";
+                case 12:
+                    return (p != null) ? p.getBoletoPasajero().getHoraSalida() : "";
+                case 13:
+                    return (p != null) ? p.getBoletoPasajero().getNumeroAsiento() : "";
+                case 14:
+                    return (p != null) ? p.getBoletoPasajero().getPrecioUnitario() : "";
+                case 15:
+                    return (p != null) ? p.getBoletoPasajero().getDescuento() : "";
+                case 16:
+                    return (p != null) ? p.getBoletoPasajero().getPrecioFinal() : "";
 
-            default:
-                return null;
+                default:
+                    return null;
+
+            }
+        } 
+        catch (ListaVacia ex) {
+
+        } 
+        catch (IndexOutOfBoundsException ex) {
 
         }
+        return pasajerosTabla;
     }
+
 
     @Override
     public String getColumnName(int column) {

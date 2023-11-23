@@ -4,7 +4,7 @@
  */
 package Controlador.TDA.Lista;
 
-import Controlador.TDA.Lista.Exepciones.EstaVacia;
+import Controlador.TDA.Lista.Exepciones.ListaVacia;
 
 /**
  *
@@ -78,9 +78,9 @@ public class ListaDinamica <E>{
         }
     }
     
-    private E ObtenerPrimero() throws EstaVacia{
+    private E ObtenerPrimero() throws ListaVacia{
         if(EstaVacio()){
-            throw new EstaVacia("La lista esta vacia");
+            throw new ListaVacia("La lista esta vacia");
     }
         return cabezera.getInfo();
     }
@@ -112,20 +112,20 @@ public class ListaDinamica <E>{
 //        }
 //    }
     
-    private E ObtenerUltimo() throws EstaVacia{
+    private E ObtenerUltimo() throws ListaVacia{
         if(EstaVacio()){
-            throw new EstaVacia("La lista esta vacia");
+            throw new ListaVacia("La lista esta vacia");
         }
         return ultimo.getInfo();
     }
     
-    public E ObtenerInfo(Integer indice)throws EstaVacia, IndexOutOfBoundsException{
+    public E getInfo(Integer indice)throws ListaVacia, IndexOutOfBoundsException{
         return ObtenerNodo(indice).getInfo();
     }
     
-    private Nodo<E> ObtenerNodo(Integer indice)throws EstaVacia, IndexOutOfBoundsException{
+    private Nodo<E> ObtenerNodo(Integer indice)throws ListaVacia, IndexOutOfBoundsException{
         if(EstaVacio()){
-            throw new EstaVacia("La lista esta vacia");
+            throw new ListaVacia("La lista esta vacia");
         }
         else if(indice < 0 || indice.intValue() == Longitud){
             throw new IndexOutOfBoundsException("Fuera de nodo");
@@ -147,7 +147,7 @@ public class ListaDinamica <E>{
         }
     }
        
-    public void AgregarPosicion (E info, Integer indice)throws EstaVacia{
+    public void AgregarPosicion (E info, Integer indice)throws ListaVacia{
         if(EstaVacio() || indice == 0){
             AgregarCabeza(info);
         }
@@ -163,7 +163,7 @@ public class ListaDinamica <E>{
         }
     }
     
-    public E eliminar(Integer pos) throws EstaVacia, IndexOutOfBoundsException {
+    public E eliminar(Integer pos) throws ListaVacia, IndexOutOfBoundsException {
 //        System.out.println("pos " + pos);
         if (!EstaVacio()) {
             E dato = null;
@@ -192,11 +192,11 @@ public class ListaDinamica <E>{
             return dato;
         } 
         else {
-            throw new EstaVacia();
+            throw new ListaVacia();
         }
     }
     
-    public E obtener(Integer pos) throws EstaVacia, IndexOutOfBoundsException {
+    public E obtener(Integer pos) throws ListaVacia, IndexOutOfBoundsException {
 
         if (!EstaVacio()) {
             E dato = null;
@@ -221,7 +221,7 @@ public class ListaDinamica <E>{
             return dato;
         } 
         else {
-            throw new EstaVacia();
+            throw new ListaVacia();
         }
 
     }
