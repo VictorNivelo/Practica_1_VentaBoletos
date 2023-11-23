@@ -41,14 +41,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         UtilLista.cargarComboTipoDni(cbxTipoDni);
         CargarTabla();
-        cargarCombosFecha(cbxDiaFecha, cbxMesFecha, cbxAnoFecha);
-        cargarCombosFecha(cbxDiaSalida, cbxMesSalida, cbxAnoSalida);
-        cbxDiaFecha.setSelectedIndex(-1);
-        cbxMesFecha.setSelectedIndex(-1);
-        cbxAnoFecha.setSelectedIndex(-1);
-        cbxDiaSalida.setSelectedIndex(-1);
-        cbxMesSalida.setSelectedIndex(-1);
-        cbxAnoSalida.setSelectedIndex(-1);
+        
         
     }
     
@@ -63,9 +56,12 @@ public class VistaPrincipal extends javax.swing.JFrame {
     }
     
     private Boolean Validar(){
-        return (!txtNombre.getText().trim().isEmpty() && !txtApellido.getText().trim().isEmpty() && !txtNumeroDNI.getText().trim().isEmpty());
-        
+        return (!txtNumeroDNI.getText().trim().isEmpty() && !txtNombre.getText().trim().isEmpty() &&!txtApellido.getText().trim().isEmpty() && 
+                !txtTelefono.getText().trim().isEmpty()&& !txtFechaNacimiento.getText().trim().isEmpty() &&!txtCantidadBoletos.getText().trim().isEmpty() && 
+                !txtFechaBoletoSalida.getText().trim().isEmpty()&& !txtNumeroAsientos.getText().trim().isEmpty() && 
+                !txtPrecioFinal.getText().trim().isEmpty() && !txtPrecioUnitario.getText().trim().isEmpty() && !txtDescuento.getText().trim().isEmpty());
     }
+    
     private void Limpiar() throws ListaVacia {
         txtApellido.setText("");
         txtNombre.setText("");
@@ -78,12 +74,6 @@ public class VistaPrincipal extends javax.swing.JFrame {
         txtTelefono.setText("");
         txtPrecioFinal.setText("");
         txtPrecioUnitario.setText("");
-        cbxDiaFecha.setSelectedIndex(-1);
-        cbxMesFecha.setSelectedIndex(-1);
-        cbxAnoFecha.setSelectedIndex(-1);
-        cbxDiaSalida.setSelectedIndex(-1);
-        cbxMesSalida.setSelectedIndex(-1);
-        cbxAnoSalida.setSelectedIndex(-1);
         pasajeroControlDao.setPasajero(null);
         CargarTabla();
 
@@ -96,22 +86,57 @@ public class VistaPrincipal extends javax.swing.JFrame {
         return Period.between(fechaNacimientoLocal, fechaActual).getYears();
     }
 
-    private void Guardar() throws ListaVacia, ParseException{
-        if (Validar()) {
+    private void Guardar() throws ListaVacia, ParseException {
+
+        if (cbxTipoDni.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(null, "Falta seleccionar combo dni", "Error", JOptionPane.ERROR_MESSAGE);
+        } 
+        else if (txtNumeroDNI.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Falta llenar numero dni", "Error", JOptionPane.ERROR_MESSAGE);
+        } 
+        else if (txtNombre.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Falta llenar nombre", "Error", JOptionPane.ERROR_MESSAGE);
+        } 
+        else if (txtApellido.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Falta llenar apellido", "Error", JOptionPane.ERROR_MESSAGE);
+        } 
+        else if (txtTelefono.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Falta llenar numero celular", "Error", JOptionPane.ERROR_MESSAGE);
+        } 
+        else if (txtFechaNacimiento.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Falta llenar fecha nacimiento", "Error", JOptionPane.ERROR_MESSAGE);
+        } 
+        else if (cbxOrigen.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(null, "Falta seleccionar combo de origen", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        else if (cbxDestino.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(null, "Falta seleccionar combo de destino", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        else if(txtCantidadBoletos.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "Falta llenar cantidad boletos", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        else if(txtFechaBoletoSalida.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "Falta llenar fecha salida", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        else if (cbxHoraSalida.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(null, "Falta seleccionar combo hora salida", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        else if(txtNumeroAsientos.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "Falta llenar numero asientos", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        else {
 
             Date fechaActual = new Date();
 
             SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MMMM-yyyy HH:mm");
             String fechaComoString = formatoFecha.format(fechaActual);
-            
-            String FechaDiaSeleccionada = cbxDiaFecha.getSelectedItem().toString();
-            String FechaMesSeleccionada = cbxMesFecha.getSelectedItem().toString();
-            String FechaAnoSeleccionada = cbxAnoFecha.getSelectedItem().toString();
 
-            String FechaCom = FechaDiaSeleccionada +"-"+FechaMesSeleccionada+"-"+FechaAnoSeleccionada+ " 00:00";
-            Date fechaSeleccionada = formatoFecha.parse(FechaCom);
-            
-            int edad = calcularEdad(fechaSeleccionada);
+//            String FechaDiaSeleccionada = cbxDiaEdad.getSelectedItem().toString();
+//            String FechaMesSeleccionada = cbxMesEdad.getSelectedItem().toString();
+//            String FechaAnoSeleccionada = cbxAnoEdad.getSelectedItem().toString();
+//            String FechaCom = FechaDiaSeleccionada +"-"+FechaMesSeleccionada+"-"+FechaAnoSeleccionada+ " 00:00";
+//            Date fechaSeleccionada = formatoFecha.parse(FechaCom);
+//            int edad = calcularEdad(fechaSeleccionada);
 //            Float Descuento;
 //            if(edad<65){
 //                Descuento = 0f;
@@ -119,48 +144,44 @@ public class VistaPrincipal extends javax.swing.JFrame {
 //                Descuento = 10f;
 //            }
 //            return Descuento;
-            
-            Integer IdPersona = ListaPasajero.getLongitud()+1;
+            Integer IdPersona = ListaPasajero.getLongitud() + 1;
             String Origen = cbxOrigen.getSelectedItem().toString();
             String Destino = cbxDestino.getSelectedItem().toString();
             String CantidadBoleto = txtCantidadBoletos.getText();
-            String FechaSalida = FechaDiaSeleccionada+"-"+FechaMesSeleccionada+"-"+FechaAnoSeleccionada;
+            String FechaSalida = txtFechaNacimiento.getText();
             String HoraSalida = cbxHoraSalida.getSelectedItem().toString();
             String FechaCompra = fechaComoString;
             Integer NumeroAsientos = Integer.valueOf(txtNumeroAsientos.getText());
-            
-            
-            Boleto BoletoPasajero = new Boleto(IdPersona, Origen, Destino, CantidadBoleto, FechaSalida, HoraSalida, FechaCompra, NumeroAsientos, 10.0f, 14, 10.0f, 10.0f);
-                    
+
+            Boleto BoletoPasajero = new Boleto(IdPersona, Origen, Destino, CantidadBoleto, FechaSalida, HoraSalida, 
+                    FechaCompra, NumeroAsientos, 10.0f, 14, 10.0f, 10.0f);
+
             pasajeroControlDao.getPasajero().setIdPersona(IdPersona);
-            
+
             pasajeroControlDao.getPasajero().setTipoDni(UtilLista.obtenerTipoDniControl(cbxTipoDni));
-            
+
             pasajeroControlDao.getPasajero().setNumeroDni(txtNumeroDNI.getText());
             pasajeroControlDao.getPasajero().setNombrePasajero(txtNombre.getText());
             pasajeroControlDao.getPasajero().setApellidoPasajero(txtApellido.getText());
             pasajeroControlDao.getPasajero().setNumeroTelefono(txtTelefono.getText());
-            pasajeroControlDao.getPasajero().setEdadPasajero(edad);
-            
+            pasajeroControlDao.getPasajero().setEdadPasajero(1);
+
             pasajeroControlDao.getPasajero().setBoletoPasajero(BoletoPasajero);
-            
-//            if(PasajeroControl.Guardar()){
-            if(pasajeroControlDao.Persist()){
+
+            if (pasajeroControlDao.Persist()) {
                 JOptionPane.showMessageDialog(null, "Boleto comprado", "Informacion", JOptionPane.INFORMATION_MESSAGE);
                 CargarTabla();
-                
+
                 pasajeroControlDao.setPasajero(null);
-            }
-            else{
+            } 
+            else {
                 JOptionPane.showMessageDialog(null, "No se pudo comprar", "Informacion", JOptionPane.INFORMATION_MESSAGE);
             }
-        }
-        else{
-            JOptionPane.showMessageDialog(null, "Falta llenar campos", "Error", JOptionPane.ERROR_MESSAGE);
+
         }
         Limpiar();
     }
-    
+
     private void CargarVista(){
         int fila = tblVentas.getSelectedRow();
         if(fila < 0){
@@ -174,8 +195,18 @@ public class VistaPrincipal extends javax.swing.JFrame {
                 txtApellido.setText(pasajeroControlDao.getPasajero().getApellidoPasajero());
                 txtNumeroDNI.setText(pasajeroControlDao.getPasajero().getNumeroDni());
                 txtTelefono.setText(pasajeroControlDao.getPasajero().getNumeroTelefono());
+                txtCantidadBoletos.setText(pasajeroControlDao.getPasajero().getBoletoPasajero().getCantidadBoletos());
+                txtNumeroAsientos.setText(pasajeroControlDao.getPasajero().getBoletoPasajero().getNumeroAsiento().toString());
+                txtPrecioUnitario.setText(pasajeroControlDao.getPasajero().getBoletoPasajero().getPrecioUnitario().toString());
+                txtPrecioFinal.setText(pasajeroControlDao.getPasajero().getBoletoPasajero().getPrecioFinal().toString());
+                txtDescuento.setText(pasajeroControlDao.getPasajero().getBoletoPasajero().getDescuento().toString());
                 
                 cbxTipoDni.setSelectedIndex(pasajeroControlDao.getPasajero().getTipoDni().getIdDni()-1);
+                
+                cbxOrigen.setSelectedItem(pasajeroControlDao.getPasajero().getBoletoPasajero().getOrigen());
+                cbxDestino.setSelectedItem(pasajeroControlDao.getPasajero().getBoletoPasajero().getDestino());
+                cbxHoraSalida.setSelectedItem(pasajeroControlDao.getPasajero().getBoletoPasajero().getHoraSalida());
+                
                 
 //                txtCorreo.setText(pasajeroControlDao.getPasajero().getPersonaCuenta().getCorreo());
 //                txtContrasena.setText(pasajeroControlDao.getPasajero().getPersonaCuenta().getContrasena());
@@ -243,12 +274,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
         txtDescuento = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
         txtCantidadBoletos = new javax.swing.JTextField();
-        cbxDiaSalida = new javax.swing.JComboBox<>();
-        cbxMesSalida = new javax.swing.JComboBox<>();
-        cbxAnoSalida = new javax.swing.JComboBox<>();
-        jLabel24 = new javax.swing.JLabel();
-        jLabel25 = new javax.swing.JLabel();
-        jLabel26 = new javax.swing.JLabel();
+        txtFechaBoletoSalida = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
@@ -262,13 +288,8 @@ public class VistaPrincipal extends javax.swing.JFrame {
         txtNombre = new javax.swing.JTextField();
         txtApellido = new javax.swing.JTextField();
         txtTelefono = new javax.swing.JTextField();
-        jLabel21 = new javax.swing.JLabel();
-        cbxDiaFecha = new javax.swing.JComboBox<>();
-        jLabel22 = new javax.swing.JLabel();
-        jLabel23 = new javax.swing.JLabel();
-        cbxMesFecha = new javax.swing.JComboBox<>();
-        cbxAnoFecha = new javax.swing.JComboBox<>();
-        jButton1 = new javax.swing.JButton();
+        txtFechaNacimiento = new javax.swing.JTextField();
+        btnComprarBoleto = new javax.swing.JButton();
         PanelRegistroVentas = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -313,10 +334,13 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
         jLabel11.setText("Descuento");
 
+        txtPrecioUnitario.setEditable(false);
         txtPrecioUnitario.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
+        txtPrecioFinal.setEditable(false);
         txtPrecioFinal.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
+        txtDescuento.setEditable(false);
         txtDescuento.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         jLabel20.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
@@ -325,14 +349,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
         txtCantidadBoletos.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
 
-        jLabel24.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel24.setText("DIA");
-
-        jLabel25.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel25.setText("MES");
-
-        jLabel26.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel26.setText("AÑO");
+        txtFechaBoletoSalida.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -355,26 +372,15 @@ public class VistaPrincipal extends javax.swing.JFrame {
                             .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(cbxDestino, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cbxDestino, 0, 409, Short.MAX_VALUE)
                             .addComponent(cbxHoraSalida, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtNumeroAsientos)
                             .addComponent(txtPrecioUnitario)
                             .addComponent(txtPrecioFinal)
                             .addComponent(txtDescuento)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel24, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(cbxDiaSalida, 0, 111, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(cbxMesSalida, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel26, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(cbxAnoSalida, 0, 110, Short.MAX_VALUE)))
                             .addComponent(txtCantidadBoletos)
-                            .addComponent(cbxOrigen, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(cbxOrigen, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtFechaBoletoSalida))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -396,15 +402,8 @@ public class VistaPrincipal extends javax.swing.JFrame {
                     .addComponent(txtCantidadBoletos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel24)
-                    .addComponent(jLabel25)
-                    .addComponent(jLabel26))
-                .addGap(5, 5, 5)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(cbxDiaSalida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cbxMesSalida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cbxAnoSalida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtFechaBoletoSalida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cbxHoraSalida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -445,53 +444,41 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jLabel17.setText("Numero celular");
 
         jLabel18.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel18.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel18.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel18.setText("Fecha nacimineto");
 
-        jLabel21.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel21.setText("DIA");
-
-        jLabel22.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel22.setText("MES");
-
-        jLabel23.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel23.setText("AÑO");
+        txtFechaNacimiento.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtFechaNacimiento.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtFechaNacimientoKeyTyped(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel17, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
-                            .addComponent(jLabel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cbxTipoDni, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtNumeroDNI)
-                            .addComponent(txtNombre)
-                            .addComponent(txtApellido)
-                            .addComponent(txtTelefono)))
+                        .addContainerGap()
+                        .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, 518, Short.MAX_VALUE))
                     .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel15, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel16, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel17, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel18, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(12, 12, 12)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(cbxDiaFecha, 0, 123, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(cbxMesFecha, 0, 245, Short.MAX_VALUE)
-                            .addComponent(jLabel22, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel23, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(cbxAnoFecha, 0, 117, Short.MAX_VALUE))))
+                            .addComponent(txtTelefono)
+                            .addComponent(txtApellido, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtNombre, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtNumeroDNI, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtFechaNacimiento)
+                            .addComponent(cbxTipoDni, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -520,25 +507,16 @@ public class VistaPrincipal extends javax.swing.JFrame {
                     .addComponent(jLabel17)
                     .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel18)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel21)
-                        .addComponent(jLabel23)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cbxDiaFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cbxMesFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cbxAnoFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtFechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel18))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jButton1.setText("COMPRAR BOLETO");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnComprarBoleto.setText("COMPRAR BOLETO");
+        btnComprarBoleto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnComprarBoletoActionPerformed(evt);
             }
         });
 
@@ -571,7 +549,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(PanelRegistroVentasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1056, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1077, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PanelRegistroVentasLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton3)))
@@ -599,8 +577,8 @@ public class VistaPrincipal extends javax.swing.JFrame {
                     .addComponent(PanelRegistroVentas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton1))
+                        .addGap(0, 952, Short.MAX_VALUE)
+                        .addComponent(btnComprarBoleto))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -617,7 +595,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addComponent(btnComprarBoleto)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(PanelRegistroVentas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -639,51 +617,113 @@ public class VistaPrincipal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try {
-            
-            Date fechaActual = new Date();
-
-            SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-            String fechaComoString = formatoFecha.format(fechaActual);
-
-            
-            Integer IdPersona = ListaPasajero.getLongitud()+1;
-            String Origen = cbxOrigen.getSelectedItem().toString();
-            String Destino = cbxDestino.getSelectedItem().toString();
-            String CantidadBoleto = txtCantidadBoletos.getName();
-            String FechaSalida = fechaComoString;
-            String HoraSalida = cbxHoraSalida.getSelectedItem().toString();
-            String FechaCompra = fechaComoString;
-            Integer NumeroAsientos = Integer.valueOf(txtNumeroAsientos.getText());
-            
-            Boleto BoletoPasajero = new Boleto(IdPersona, Origen, Destino, CantidadBoleto, FechaSalida, HoraSalida, FechaCompra, NumeroAsientos, 10.0f, 14, 10.0f, 10.0f);
-            
-            TipoDNI tipoDNI = UtilLista.obtenerTipoDniControl(cbxTipoDni);
-            String NumeroDNI = txtNumeroDNI.getText();
-            String NombrePasajero = txtNombre.getText();
-            String ApellidoPasajero = txtApellido.getText();
-            String NumeroTelefono = txtTelefono.getText();
-            
-            Pasajero PasajeroGuardar = new Pasajero(IdPersona, tipoDNI, NumeroDNI, NombrePasajero, ApellidoPasajero, NumeroTelefono, 20, BoletoPasajero);
-            
-            ListaPasajero.Agregar(PasajeroGuardar);
-            
-            Guardar();
-            
-            System.out.println(""+ListaPasajero);
+    private void btnComprarBoletoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnComprarBoletoActionPerformed
+        if (cbxTipoDni.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(null, "Falta seleccionar combo dni", "Error", JOptionPane.ERROR_MESSAGE);
         } 
-        catch (ListaVacia ex) {
-            Logger.getLogger(VistaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
-            Logger.getLogger(VistaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        else if (txtNumeroDNI.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Falta llenar numero dni", "Error", JOptionPane.ERROR_MESSAGE);
+        } 
+        else if (txtNombre.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Falta llenar nombre", "Error", JOptionPane.ERROR_MESSAGE);
+        } 
+        else if (txtApellido.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Falta llenar apellido", "Error", JOptionPane.ERROR_MESSAGE);
+        } 
+        else if (txtTelefono.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Falta llenar numero celular", "Error", JOptionPane.ERROR_MESSAGE);
+        } 
+        else if (txtFechaNacimiento.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Falta llenar fecha nacimiento", "Error", JOptionPane.ERROR_MESSAGE);
+        } 
+        else if (cbxOrigen.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(null, "Falta seleccionar combo de origen", "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+        else if (cbxDestino.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(null, "Falta seleccionar combo de destino", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        else if(txtCantidadBoletos.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "Falta llenar cantidad boletos", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        else if(txtFechaBoletoSalida.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "Falta llenar fecha salida", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        else if (cbxHoraSalida.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(null, "Falta seleccionar combo hora salida", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        else if(txtNumeroAsientos.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "Falta llenar numero asientos", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        else {
+            try {
+                
+                Date fechaActual = new Date();
+
+                SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                String fechaComoString = formatoFecha.format(fechaActual);
+
+                Integer IdPersona = ListaPasajero.getLongitud() + 1;
+                String Origen = cbxOrigen.getSelectedItem().toString();
+                String Destino = cbxDestino.getSelectedItem().toString();
+                String CantidadBoleto = txtCantidadBoletos.getName();
+                String FechaSalida = fechaComoString;
+                String HoraSalida = cbxHoraSalida.getSelectedItem().toString();
+                String FechaCompra = fechaComoString;
+                Integer NumeroAsientos = Integer.valueOf(txtNumeroAsientos.getText());
+
+                Boleto BoletoPasajero = new Boleto(IdPersona, Origen, Destino, CantidadBoleto, FechaSalida, HoraSalida, FechaCompra, NumeroAsientos, 10.0f, 14, 10.0f, 10.0f);
+
+                TipoDNI tipoDNI = UtilLista.obtenerTipoDniControl(cbxTipoDni);
+                String NumeroDNI = txtNumeroDNI.getText();
+                String NombrePasajero = txtNombre.getText();
+                String ApellidoPasajero = txtApellido.getText();
+                String NumeroTelefono = txtTelefono.getText();
+
+                Pasajero PasajeroGuardar = new Pasajero(IdPersona, tipoDNI, NumeroDNI, NombrePasajero, ApellidoPasajero, NumeroTelefono, 20, BoletoPasajero);
+
+                ListaPasajero.Agregar(PasajeroGuardar);
+
+                Guardar();
+
+                System.out.println("" + ListaPasajero);
+
+            } 
+            catch (ListaVacia ex) {
+                Logger.getLogger(VistaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            } 
+            catch (ParseException ex) {
+                Logger.getLogger(VistaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        
+    }//GEN-LAST:event_btnComprarBoletoActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+        int fila = tblVentas.getSelectedRow();
         CargarVista();
+        
+//        pasajeroControlDao.getListaPasajeros().ModificarInfo(null, fila);
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void txtFechaNacimientoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFechaNacimientoKeyTyped
+        // TODO add your handling code here:
+        int key = evt.getKeyChar();
+        boolean slash = key == 47;
+        boolean delete = key == 8;
+
+        Character c = evt.getKeyChar();
+
+        if (!(Character.isDigit(c) || slash || delete)) {
+            evt.consume();
+            JOptionPane.showMessageDialog(null, "Solo ingreso de numeros y simbolo /", "TEXTO NO VALIDO", JOptionPane.WARNING_MESSAGE);
+        }
+        if (txtFechaNacimiento.getText().length() >= 10) {
+            evt.consume();
+        }
+        
+    }//GEN-LAST:event_txtFechaNacimientoKeyTyped
 
     /**
      * @param args the command line arguments
@@ -726,17 +766,11 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel PanelRegistroVentas;
-    private javax.swing.JComboBox<String> cbxAnoFecha;
-    private javax.swing.JComboBox<String> cbxAnoSalida;
+    private javax.swing.JButton btnComprarBoleto;
     private javax.swing.JComboBox<String> cbxDestino;
-    private javax.swing.JComboBox<String> cbxDiaFecha;
-    private javax.swing.JComboBox<String> cbxDiaSalida;
     private javax.swing.JComboBox<String> cbxHoraSalida;
-    private javax.swing.JComboBox<String> cbxMesFecha;
-    private javax.swing.JComboBox<String> cbxMesSalida;
     private javax.swing.JComboBox<String> cbxOrigen;
     private javax.swing.JComboBox<String> cbxTipoDni;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -751,12 +785,6 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel21;
-    private javax.swing.JLabel jLabel22;
-    private javax.swing.JLabel jLabel23;
-    private javax.swing.JLabel jLabel24;
-    private javax.swing.JLabel jLabel25;
-    private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -772,6 +800,8 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private javax.swing.JTextField txtApellido;
     private javax.swing.JTextField txtCantidadBoletos;
     private javax.swing.JTextField txtDescuento;
+    private javax.swing.JTextField txtFechaBoletoSalida;
+    private javax.swing.JTextField txtFechaNacimiento;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtNumeroAsientos;
     private javax.swing.JTextField txtNumeroDNI;
