@@ -12,8 +12,15 @@ import Modelo.Pasajero;
 import Modelo.TipoDNI;
 import Vista.Modelo.ModeloTablaVenta;
 import Vista.Util.UtilLista;
+import java.text.DateFormatSymbols;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
 /**
@@ -34,12 +41,25 @@ public class VistaPrincipal extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         UtilLista.cargarComboTipoDni(cbxTipoDni);
         CargarTabla();
+        cargarCombosFecha(cbxDiaFecha, cbxMesFecha, cbxAnoFecha);
+        cargarCombosFecha(cbxDiaSalida, cbxMesSalida, cbxAnoSalida);
+        cbxDiaFecha.setSelectedIndex(-1);
+        cbxMesFecha.setSelectedIndex(-1);
+        cbxAnoFecha.setSelectedIndex(-1);
+        cbxDiaSalida.setSelectedIndex(-1);
+        cbxMesSalida.setSelectedIndex(-1);
+        cbxAnoSalida.setSelectedIndex(-1);
+        
     }
     
     private void CargarTabla() {
         mtv.setPasajerosTabla(pasajeroControlDao.getListaPasajeros());
         tblVentas.setModel(mtv);
         tblVentas.updateUI();
+        cbxTipoDni.setSelectedIndex(-1);
+        cbxOrigen.setSelectedIndex(-1);
+        cbxDestino.setSelectedIndex(-1);
+        cbxHoraSalida.setSelectedIndex(-1);
     }
     
     private Boolean Validar(){
@@ -56,24 +76,59 @@ public class VistaPrincipal extends javax.swing.JFrame {
         cbxDestino.setSelectedIndex(-1);
         cbxHoraSalida.setSelectedIndex(-1);
         txtTelefono.setText("");
-        txtFechaSalida.setText("");
         txtPrecioFinal.setText("");
         txtPrecioUnitario.setText("");
+        cbxDiaFecha.setSelectedIndex(-1);
+        cbxMesFecha.setSelectedIndex(-1);
+        cbxAnoFecha.setSelectedIndex(-1);
+        cbxDiaSalida.setSelectedIndex(-1);
+        cbxMesSalida.setSelectedIndex(-1);
+        cbxAnoSalida.setSelectedIndex(-1);
         pasajeroControlDao.setPasajero(null);
         CargarTabla();
 
     }
     
-    private void Guardar() throws ListaVacia{
-        if(Validar()){
+    private static int calcularEdad(Date fechaNacimiento) {
+        LocalDate fechaNacimientoLocal = fechaNacimiento.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+        LocalDate fechaActual = LocalDate.now();
+
+        return Period.between(fechaNacimientoLocal, fechaActual).getYears();
+    }
+
+    private void Guardar() throws ListaVacia, ParseException{
+        if (Validar()) {
+
+            Date fechaActual = new Date();
+
+            SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MMMM-yyyy HH:mm");
+            String fechaComoString = formatoFecha.format(fechaActual);
+            
+            String FechaDiaSeleccionada = cbxDiaFecha.getSelectedItem().toString();
+            String FechaMesSeleccionada = cbxMesFecha.getSelectedItem().toString();
+            String FechaAnoSeleccionada = cbxAnoFecha.getSelectedItem().toString();
+
+            String FechaCom = FechaDiaSeleccionada +"-"+FechaMesSeleccionada+"-"+FechaAnoSeleccionada+ " 00:00";
+            Date fechaSeleccionada = formatoFecha.parse(FechaCom);
+            
+            int edad = calcularEdad(fechaSeleccionada);
+//            Float Descuento;
+//            if(edad<65){
+//                Descuento = 0f;
+//            }else{
+//                Descuento = 10f;
+//            }
+//            return Descuento;
+            
             Integer IdPersona = ListaPasajero.getLongitud()+1;
             String Origen = cbxOrigen.getSelectedItem().toString();
             String Destino = cbxDestino.getSelectedItem().toString();
             String CantidadBoleto = txtCantidadBoletos.getText();
-            String FechaSalida = txtFechaSalida.getText();
+            String FechaSalida = FechaDiaSeleccionada+"-"+FechaMesSeleccionada+"-"+FechaAnoSeleccionada;
             String HoraSalida = cbxHoraSalida.getSelectedItem().toString();
-            String FechaCompra = txtFechaSalida.getText();
+            String FechaCompra = fechaComoString;
             Integer NumeroAsientos = Integer.valueOf(txtNumeroAsientos.getText());
+            
             
             Boleto BoletoPasajero = new Boleto(IdPersona, Origen, Destino, CantidadBoleto, FechaSalida, HoraSalida, FechaCompra, NumeroAsientos, 10.0f, 14, 10.0f, 10.0f);
                     
@@ -85,7 +140,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
             pasajeroControlDao.getPasajero().setNombrePasajero(txtNombre.getText());
             pasajeroControlDao.getPasajero().setApellidoPasajero(txtApellido.getText());
             pasajeroControlDao.getPasajero().setNumeroTelefono(txtTelefono.getText());
-            pasajeroControlDao.getPasajero().setEdadPasajero(1);
+            pasajeroControlDao.getPasajero().setEdadPasajero(edad);
             
             pasajeroControlDao.getPasajero().setBoletoPasajero(BoletoPasajero);
             
@@ -134,6 +189,28 @@ public class VistaPrincipal extends javax.swing.JFrame {
             }
         }
     }
+    
+    public static void cargarCombosFecha(JComboBox dia, JComboBox mes, JComboBox anio) {
+        dia.removeAllItems();
+        mes.removeAllItems();
+        anio.removeAllItems();
+
+        for (int i = 1; i <= 31; i++) {
+            dia.addItem(i);
+        }
+
+        String[] nombresMeses = new DateFormatSymbols().getMonths();
+
+        for (int i = 0; i < 12; i++) {
+            mes.addItem(nombresMeses[i]);
+        }
+
+        Integer anio_actual = new Date().getYear() + 1900;
+        
+        for (int i = anio_actual; i >= (anio_actual - 100); i--) {
+            anio.addItem(i);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -154,7 +231,6 @@ public class VistaPrincipal extends javax.swing.JFrame {
         cbxDestino = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        txtFechaSalida = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         cbxHoraSalida = new javax.swing.JComboBox<>();
         jLabel7 = new javax.swing.JLabel();
@@ -167,6 +243,12 @@ public class VistaPrincipal extends javax.swing.JFrame {
         txtDescuento = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
         txtCantidadBoletos = new javax.swing.JTextField();
+        cbxDiaSalida = new javax.swing.JComboBox<>();
+        cbxMesSalida = new javax.swing.JComboBox<>();
+        cbxAnoSalida = new javax.swing.JComboBox<>();
+        jLabel24 = new javax.swing.JLabel();
+        jLabel25 = new javax.swing.JLabel();
+        jLabel26 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
@@ -187,7 +269,6 @@ public class VistaPrincipal extends javax.swing.JFrame {
         cbxMesFecha = new javax.swing.JComboBox<>();
         cbxAnoFecha = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
         PanelRegistroVentas = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -208,17 +289,15 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
         jLabel1.setText("Origen");
 
-        cbxOrigen.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Esmeraldas", "Carchi", "Imbabura", "Sucumbíos", "Pichincha", "Napo", "Orellana", "Chimborazo", "Tungurahua", "Pastaza", "Cotopaxi", "Santa Elena", "Guayas", "Los Ríos", "Galápagos", "Bolívar", "Cañar", "Azuay", "Morona Santiago" }));
+        cbxOrigen.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Azuay", "Bolívar", "Cañar", "Carchi", "Chimborazo", "Cotopaxi", "El Oro", "Esmeraldas", "Galápagos", "Guayas", "Imbabura", "Loja", "Los Ríos", "Manabí", "Morona Santiago", "Napo", "Orellana", "Pastaza", "Pichincha", "Santa Elena", "Santo Domingo de los Tsáchilas", "Sucumbíos", "Tungurahua", "Zamora-Chinchipe" }));
 
         jLabel3.setText("Destino");
 
-        cbxDestino.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Esmeraldas", "Carchi", "Imbabura", "Sucumbíos", "Pichincha", "Napo", "Orellana", "Chimborazo", "Tungurahua", "Pastaza", "Cotopaxi", "Santa Elena", "Guayas", "Los Ríos", "Galápagos", "Bolívar", "Cañar", "Azuay", "Morona Santiago" }));
+        cbxDestino.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Azuay", "Bolívar", "Cañar", "Carchi", "Chimborazo", "Cotopaxi", "El Oro", "Esmeraldas", "Galápagos", "Guayas", "Imbabura", "Loja", "Los Ríos", "Manabí", "Morona Santiago", "Napo", "Orellana", "Pastaza", "Pichincha", "Santa Elena", "Santo Domingo de los Tsáchilas", "Sucumbíos", "Tungurahua", "Zamora-Chinchipe" }));
 
         jLabel4.setText("Cantidad de boletos");
 
         jLabel5.setText("Fecha de salida");
-
-        txtFechaSalida.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         jLabel6.setText("Hora de salida");
 
@@ -246,6 +325,15 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
         txtCantidadBoletos.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
 
+        jLabel24.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel24.setText("DIA");
+
+        jLabel25.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel25.setText("MES");
+
+        jLabel26.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel26.setText("AÑO");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -267,15 +355,26 @@ public class VistaPrincipal extends javax.swing.JFrame {
                             .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(cbxDestino, 0, 295, Short.MAX_VALUE)
-                            .addComponent(txtFechaSalida)
+                            .addComponent(cbxDestino, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(cbxHoraSalida, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtNumeroAsientos)
                             .addComponent(txtPrecioUnitario)
                             .addComponent(txtPrecioFinal)
                             .addComponent(txtDescuento)
-                            .addComponent(cbxOrigen, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtCantidadBoletos))))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel24, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(cbxDiaSalida, 0, 111, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(cbxMesSalida, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel26, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(cbxAnoSalida, 0, 110, Short.MAX_VALUE)))
+                            .addComponent(txtCantidadBoletos)
+                            .addComponent(cbxOrigen, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -295,10 +394,17 @@ public class VistaPrincipal extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(txtCantidadBoletos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(10, 10, 10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel24)
+                    .addComponent(jLabel25)
+                    .addComponent(jLabel26))
+                .addGap(5, 5, 5)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(txtFechaSalida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cbxDiaSalida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbxMesSalida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbxAnoSalida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cbxHoraSalida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -343,13 +449,13 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jLabel18.setText("Fecha nacimineto");
 
         jLabel21.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel21.setText("Dia");
+        jLabel21.setText("DIA");
 
         jLabel22.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel22.setText("Mes");
+        jLabel22.setText("MES");
 
         jLabel23.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel23.setText("Año");
+        jLabel23.setText("AÑO");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -359,7 +465,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
+                    .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -375,17 +481,17 @@ public class VistaPrincipal extends javax.swing.JFrame {
                             .addComponent(txtApellido)
                             .addComponent(txtTelefono)))
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(cbxDiaFecha, 0, 105, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel22, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(cbxMesFecha, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cbxDiaFecha, 0, 123, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(cbxMesFecha, 0, 245, Short.MAX_VALUE)
+                            .addComponent(jLabel22, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel23, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(cbxAnoFecha, 0, 105, Short.MAX_VALUE))))
+                            .addComponent(cbxAnoFecha, 0, 117, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -436,8 +542,6 @@ public class VistaPrincipal extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("VER REGISTRO DE VENTAS");
-
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel9.setText("REGISTRO DE VENTAS");
@@ -467,7 +571,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(PanelRegistroVentasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1056, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PanelRegistroVentasLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton3)))
@@ -495,8 +599,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
                     .addComponent(PanelRegistroVentas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(jButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton1))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -514,9 +617,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(PanelRegistroVentas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -540,13 +641,20 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         try {
+            
+            Date fechaActual = new Date();
+
+            SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            String fechaComoString = formatoFecha.format(fechaActual);
+
+            
             Integer IdPersona = ListaPasajero.getLongitud()+1;
             String Origen = cbxOrigen.getSelectedItem().toString();
             String Destino = cbxDestino.getSelectedItem().toString();
             String CantidadBoleto = txtCantidadBoletos.getName();
-            String FechaSalida = txtFechaSalida.getText();
+            String FechaSalida = fechaComoString;
             String HoraSalida = cbxHoraSalida.getSelectedItem().toString();
-            String FechaCompra = txtFechaSalida.getText();
+            String FechaCompra = fechaComoString;
             Integer NumeroAsientos = Integer.valueOf(txtNumeroAsientos.getText());
             
             Boleto BoletoPasajero = new Boleto(IdPersona, Origen, Destino, CantidadBoleto, FechaSalida, HoraSalida, FechaCompra, NumeroAsientos, 10.0f, 14, 10.0f, 10.0f);
@@ -566,6 +674,8 @@ public class VistaPrincipal extends javax.swing.JFrame {
             System.out.println(""+ListaPasajero);
         } 
         catch (ListaVacia ex) {
+            Logger.getLogger(VistaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
             Logger.getLogger(VistaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -617,14 +727,16 @@ public class VistaPrincipal extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel PanelRegistroVentas;
     private javax.swing.JComboBox<String> cbxAnoFecha;
+    private javax.swing.JComboBox<String> cbxAnoSalida;
     private javax.swing.JComboBox<String> cbxDestino;
     private javax.swing.JComboBox<String> cbxDiaFecha;
+    private javax.swing.JComboBox<String> cbxDiaSalida;
     private javax.swing.JComboBox<String> cbxHoraSalida;
     private javax.swing.JComboBox<String> cbxMesFecha;
+    private javax.swing.JComboBox<String> cbxMesSalida;
     private javax.swing.JComboBox<String> cbxOrigen;
     private javax.swing.JComboBox<String> cbxTipoDni;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -642,6 +754,9 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -657,7 +772,6 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private javax.swing.JTextField txtApellido;
     private javax.swing.JTextField txtCantidadBoletos;
     private javax.swing.JTextField txtDescuento;
-    private javax.swing.JTextField txtFechaSalida;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtNumeroAsientos;
     private javax.swing.JTextField txtNumeroDNI;

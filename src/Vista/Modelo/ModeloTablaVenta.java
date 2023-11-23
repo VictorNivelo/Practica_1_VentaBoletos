@@ -118,7 +118,7 @@ public class ModeloTablaVenta extends AbstractTableModel {
             case 9:
                 return "Cantidad voletos";
             case 10:
-                return "Fecha scompra";
+                return "Fecha compra";
             case 11:
                 return "Fecha salida";
             case 12:
