@@ -17,12 +17,13 @@ public class Pasajero {
     private String NumeroTelefono;
     private Integer EdadPasajero;
     private Boleto boletoPasajero;
+    private String FechaNacimineto;
     
     public Pasajero() {
         
     }
 
-    public Pasajero(Integer idPersona, TipoDNI TipoDni, String NumeroDni, String NombrePasajero, String ApellidoPasajero, String NumeroTelefono, Integer EdadPasajero, Boleto boletoPasajero) {
+    public Pasajero(Integer idPersona, TipoDNI TipoDni, String NumeroDni, String NombrePasajero, String ApellidoPasajero, String NumeroTelefono, Integer EdadPasajero, Boleto boletoPasajero, String FechaNacimineto) {
         this.idPersona = idPersona;
         this.TipoDni = TipoDni;
         this.NumeroDni = NumeroDni;
@@ -31,6 +32,7 @@ public class Pasajero {
         this.NumeroTelefono = NumeroTelefono;
         this.EdadPasajero = EdadPasajero;
         this.boletoPasajero = boletoPasajero;
+        this.FechaNacimineto = FechaNacimineto;
     }
 
     public Integer getIdPersona() {
@@ -96,11 +98,18 @@ public class Pasajero {
     public void setBoletoPasajero(Boleto boletoPasajero) {
         this.boletoPasajero = boletoPasajero;
     }
-    
-    
+
+    public String getFechaNacimineto() {
+        return FechaNacimineto;
+    }
+
+    public void setFechaNacimineto(String FechaNacimineto) {
+        this.FechaNacimineto = FechaNacimineto;
+    }
+
     @Override
     public String toString() {
-        return "Pasajero{" + "idPersona=" + idPersona + ", TipoDni=" + TipoDni + ", NumeroDni=" + NumeroDni + ", NombrePasajero=" + NombrePasajero + ", ApellidoPasajero=" + ApellidoPasajero + ", NumeroTelefono=" + NumeroTelefono + ", EdadPasajero=" + EdadPasajero + ", boletoPasajero=" + boletoPasajero + '}';
+        return "Pasajero{" + "idPersona=" + idPersona + ", TipoDni=" + TipoDni + ", NumeroDni=" + NumeroDni + ", NombrePasajero=" + NombrePasajero + ", ApellidoPasajero=" + ApellidoPasajero + ", NumeroTelefono=" + NumeroTelefono + ", EdadPasajero=" + EdadPasajero + ", boletoPasajero=" + boletoPasajero + ", FechaNacimineto=" + FechaNacimineto + '}';
     }
-    
+           
 }

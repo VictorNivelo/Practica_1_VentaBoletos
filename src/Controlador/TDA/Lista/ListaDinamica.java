@@ -78,7 +78,7 @@ public class ListaDinamica <E>{
         }
     }
     
-    private E ObtenerPrimero() throws ListaVacia{
+    private E getPrimero() throws ListaVacia{
         if(EstaVacio()){
             throw new ListaVacia("La lista esta vacia");
     }
@@ -112,7 +112,7 @@ public class ListaDinamica <E>{
 //        }
 //    }
     
-    private E ObtenerUltimo() throws ListaVacia{
+    private E getFinal() throws ListaVacia{
         if(EstaVacio()){
             throw new ListaVacia("La lista esta vacia");
         }
@@ -147,24 +147,49 @@ public class ListaDinamica <E>{
         }
     }
        
-    public void AgregarPosicion (E info, Integer indice)throws ListaVacia{
-        if(EstaVacio() || indice == 0){
-            AgregarCabeza(info);
-        }
-        else if(indice.intValue() == Longitud){
-            AgregarFinal(info);
-        }
-        else{
-            Nodo<E> BuscarPrevio = ObtenerNodo(indice - 1);
-            Nodo<E> Buscar= ObtenerNodo(indice);
-            Nodo<E> Ayuda = new Nodo<>(info, Buscar);
-            BuscarPrevio.setSiguiente(Ayuda);
-            Longitud++;
-        }
-    }
+//    public void AgregarPosicion (E info, Integer indice)throws ListaVacia{
+//        if(EstaVacio() || indice == 0){
+//            AgregarCabeza(info);
+//        }
+//        else if(indice.intValue() == Longitud){
+//            AgregarFinal(info);
+//        }
+//        else{
+//            Nodo<E> BuscarPrevio = ObtenerNodo(indice - 1);
+//            Nodo<E> Buscar= ObtenerNodo(indice);
+//            Nodo<E> Ayuda = new Nodo<>(info, Buscar);
+//            BuscarPrevio.setSiguiente(Ayuda);
+//            Longitud++;
+//        }
+//    }
+    
+//    public void Eliminar(Integer pos) throws IndexOutOfBoundsException, ListaVacia {
+//        if (EstaVacio()) {
+//            throw new ListaVacia("La lista está vacía");
+//        } 
+//        else if (pos >= 0 && pos < Longitud) {
+//            if (pos == 0) {
+//                cabezera = cabezera.getSiguiente();
+//                if (Longitud == 1) {
+//                    ultimo = null;
+//                }
+//            } 
+//            else {
+//                Nodo<E> anterior = ObtenerNodo(pos - 1);
+//                Nodo<E> actual = anterior.getSiguiente();
+//                anterior.setSiguiente(actual.getSiguiente());
+//                if (pos == Longitud - 1) {
+//                    ultimo = anterior;
+//                }
+//            }
+//            Longitud--;
+//        } 
+//        else {
+//            throw new IndexOutOfBoundsException("Posición fuera de límites");
+//        }
+//    }
     
     public E eliminar(Integer pos) throws ListaVacia, IndexOutOfBoundsException {
-//        System.out.println("pos " + pos);
         if (!EstaVacio()) {
             E dato = null;
             if (pos >= 0 && pos < Longitud) {
@@ -225,6 +250,19 @@ public class ListaDinamica <E>{
         }
 
     }
+    
+//    public void ModificarInfo(E dato, Integer pos) throws IndexOutOfBoundsException, ListaVacia {
+//    if (EstaVacio()) {
+//        throw new ListaVacia("La lista está vacía");
+//    } 
+//    else if (pos >= 0 && pos < Longitud) {
+//        Nodo<E> nodoModificar = ObtenerNodo(pos);
+//        nodoModificar.setInfo(dato);
+//    } 
+//    else {
+//        throw new IndexOutOfBoundsException("Posición fuera de límites");
+//    }
+//}
 
     public void ModificarInfo(E dato, Integer pos) throws IndexOutOfBoundsException {
         if (EstaVacio()) {

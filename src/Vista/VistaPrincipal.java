@@ -12,7 +12,6 @@ import Modelo.Pasajero;
 import Modelo.TipoDNI;
 import Vista.Modelo.ModeloTablaVenta;
 import Vista.Util.UtilLista;
-import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -20,7 +19,6 @@ import java.time.Period;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
 /**
@@ -29,20 +27,19 @@ import javax.swing.JOptionPane;
  */
 public class VistaPrincipal extends javax.swing.JFrame {
     
-    private ModeloTablaVenta mtv = new ModeloTablaVenta();
-    private PasajeroDao pasajeroControlDao = new PasajeroDao();
-    private ListaDinamica<Pasajero> ListaPasajero = new ListaDinamica<>();
+    ModeloTablaVenta mtv = new ModeloTablaVenta();
+    PasajeroDao pasajeroControlDao = new PasajeroDao();
+    ListaDinamica<Pasajero> ListaPasajero = new ListaDinamica<>();
 
     /**
      * Creates new form VistaPrincipal
+     * @throws Controlador.TDA.Lista.Exepciones.ListaVacia
      */
     public VistaPrincipal() throws ListaVacia {
         initComponents();
         this.setLocationRelativeTo(null);
         UtilLista.cargarComboTipoDni(cbxTipoDni);
         CargarTabla();
-        
-        
     }
     
     private void CargarTabla() {
@@ -53,15 +50,27 @@ public class VistaPrincipal extends javax.swing.JFrame {
         cbxOrigen.setSelectedIndex(-1);
         cbxDestino.setSelectedIndex(-1);
         cbxHoraSalida.setSelectedIndex(-1);
+        tblVentas.setModel(mtv);
+        tblVentas.updateUI();
     }
     
-    private Boolean Validar(){
-        return (!txtNumeroDNI.getText().trim().isEmpty() && !txtNombre.getText().trim().isEmpty() &&!txtApellido.getText().trim().isEmpty() && 
-                !txtTelefono.getText().trim().isEmpty()&& !txtFechaNacimiento.getText().trim().isEmpty() &&!txtCantidadBoletos.getText().trim().isEmpty() && 
-                !txtFechaBoletoSalida.getText().trim().isEmpty()&& !txtNumeroAsientos.getText().trim().isEmpty() && 
-                !txtPrecioFinal.getText().trim().isEmpty() && !txtPrecioUnitario.getText().trim().isEmpty() && !txtDescuento.getText().trim().isEmpty());
-    }
+//    private void CargarTabla() {
+//        mtv.setPasajerosTabla(pasajeroControlDao.getListaPasajeros());
+//        tblVentas.setModel(mtv);
+//        tblVentas.updateUI();
+//        cbxTipoDni.setSelectedIndex(-1);
+//        cbxOrigen.setSelectedIndex(-1);
+//        cbxDestino.setSelectedIndex(-1);
+//        cbxHoraSalida.setSelectedIndex(-1);
+//    }
     
+    private Boolean Validar() {
+        return (!txtNumeroDNI.getText().trim().isEmpty() && !txtNombre.getText().trim().isEmpty() && !txtApellido.getText().trim().isEmpty()
+                && !txtTelefono.getText().trim().isEmpty() && !txtFechaNacimiento.getText().trim().isEmpty() && !txtCantidadBoletos.getText().trim().isEmpty()
+                && !txtFechaBoletoSalida.getText().trim().isEmpty() && !txtNumeroAsientos.getText().trim().isEmpty()
+                && !txtPrecioFinal.getText().trim().isEmpty() && !txtPrecioUnitario.getText().trim().isEmpty() && !txtDescuento.getText().trim().isEmpty());
+    }
+
     private void Limpiar() throws ListaVacia {
         txtApellido.setText("");
         txtNombre.setText("");
@@ -74,6 +83,10 @@ public class VistaPrincipal extends javax.swing.JFrame {
         txtTelefono.setText("");
         txtPrecioFinal.setText("");
         txtPrecioUnitario.setText("");
+        txtFechaNacimiento.setText("");
+        txtFechaBoletoSalida.setText("");
+        txtCantidadBoletos.setText("");
+        txtDescuento.setText("");
         pasajeroControlDao.setPasajero(null);
         CargarTabla();
 
@@ -125,36 +138,40 @@ public class VistaPrincipal extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Falta llenar numero asientos", "Error", JOptionPane.ERROR_MESSAGE);
         }
         else {
-
+            
             Date fechaActual = new Date();
 
             SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MMMM-yyyy HH:mm");
             String fechaComoString = formatoFecha.format(fechaActual);
 
-//            String FechaDiaSeleccionada = cbxDiaEdad.getSelectedItem().toString();
-//            String FechaMesSeleccionada = cbxMesEdad.getSelectedItem().toString();
-//            String FechaAnoSeleccionada = cbxAnoEdad.getSelectedItem().toString();
-//            String FechaCom = FechaDiaSeleccionada +"-"+FechaMesSeleccionada+"-"+FechaAnoSeleccionada+ " 00:00";
-//            Date fechaSeleccionada = formatoFecha.parse(FechaCom);
-//            int edad = calcularEdad(fechaSeleccionada);
-//            Float Descuento;
-//            if(edad<65){
-//                Descuento = 0f;
-//            }else{
-//                Descuento = 10f;
-//            }
-//            return Descuento;
+            SimpleDateFormat formatoDeFecha = new SimpleDateFormat("dd/MM/yyyy");
+            String FechaNacido = txtFechaNacimiento.getText();
+            Date fechaSeleccionada = formatoDeFecha.parse(FechaNacido);
+
+            int edad = calcularEdad(fechaSeleccionada);
+
+            Float precioUnitario = 15.5f;
+            String Descuento = "";
+            if (edad >= 65) {
+                precioUnitario = precioUnitario * 0.9f;
+                Descuento = "Aplica descuento 10%";
+            } 
+            else {
+                Descuento = "No aplica descuentos";
+            }
+
             Integer IdPersona = ListaPasajero.getLongitud() + 1;
             String Origen = cbxOrigen.getSelectedItem().toString();
             String Destino = cbxDestino.getSelectedItem().toString();
-            String CantidadBoleto = txtCantidadBoletos.getText();
-            String FechaSalida = txtFechaNacimiento.getText();
+            Integer CantidadBoleto = Integer.parseInt(txtCantidadBoletos.getText());
+            String FechaSalida = txtFechaBoletoSalida.getText();
             String HoraSalida = cbxHoraSalida.getSelectedItem().toString();
             String FechaCompra = fechaComoString;
             Integer NumeroAsientos = Integer.valueOf(txtNumeroAsientos.getText());
 
-            Boleto BoletoPasajero = new Boleto(IdPersona, Origen, Destino, CantidadBoleto, FechaSalida, HoraSalida, 
-                    FechaCompra, NumeroAsientos, 10.0f, 14, 10.0f, 10.0f);
+            Float precioFinal = precioUnitario * CantidadBoleto;
+
+            Boleto BoletoPasajero = new Boleto(IdPersona, Origen, Destino, CantidadBoleto, FechaSalida, HoraSalida,FechaCompra, NumeroAsientos, 15.5f, 14, Descuento, precioFinal);
 
             pasajeroControlDao.getPasajero().setIdPersona(IdPersona);
 
@@ -164,7 +181,8 @@ public class VistaPrincipal extends javax.swing.JFrame {
             pasajeroControlDao.getPasajero().setNombrePasajero(txtNombre.getText());
             pasajeroControlDao.getPasajero().setApellidoPasajero(txtApellido.getText());
             pasajeroControlDao.getPasajero().setNumeroTelefono(txtTelefono.getText());
-            pasajeroControlDao.getPasajero().setEdadPasajero(1);
+            pasajeroControlDao.getPasajero().setEdadPasajero(edad);
+            pasajeroControlDao.getPasajero().setFechaNacimineto(FechaNacido);
 
             pasajeroControlDao.getPasajero().setBoletoPasajero(BoletoPasajero);
 
@@ -195,11 +213,15 @@ public class VistaPrincipal extends javax.swing.JFrame {
                 txtApellido.setText(pasajeroControlDao.getPasajero().getApellidoPasajero());
                 txtNumeroDNI.setText(pasajeroControlDao.getPasajero().getNumeroDni());
                 txtTelefono.setText(pasajeroControlDao.getPasajero().getNumeroTelefono());
-                txtCantidadBoletos.setText(pasajeroControlDao.getPasajero().getBoletoPasajero().getCantidadBoletos());
+                txtCantidadBoletos.setText(pasajeroControlDao.getPasajero().getBoletoPasajero().getCantidadBoletos().toString());
                 txtNumeroAsientos.setText(pasajeroControlDao.getPasajero().getBoletoPasajero().getNumeroAsiento().toString());
                 txtPrecioUnitario.setText(pasajeroControlDao.getPasajero().getBoletoPasajero().getPrecioUnitario().toString());
                 txtPrecioFinal.setText(pasajeroControlDao.getPasajero().getBoletoPasajero().getPrecioFinal().toString());
-                txtDescuento.setText(pasajeroControlDao.getPasajero().getBoletoPasajero().getDescuento().toString());
+                txtDescuento.setText(pasajeroControlDao.getPasajero().getBoletoPasajero().getDescuento());
+                txtFechaNacimiento.setText(pasajeroControlDao.getPasajero().getFechaNacimineto());
+                txtFechaBoletoSalida.setText(pasajeroControlDao.getPasajero().getBoletoPasajero().getFechaSalida());
+                txtCantidadBoletos.setText(pasajeroControlDao.getPasajero().getBoletoPasajero().getCantidadBoletos().toString());
+
                 
                 cbxTipoDni.setSelectedIndex(pasajeroControlDao.getPasajero().getTipoDni().getIdDni()-1);
                 
@@ -207,41 +229,48 @@ public class VistaPrincipal extends javax.swing.JFrame {
                 cbxDestino.setSelectedItem(pasajeroControlDao.getPasajero().getBoletoPasajero().getDestino());
                 cbxHoraSalida.setSelectedItem(pasajeroControlDao.getPasajero().getBoletoPasajero().getHoraSalida());
                 
-                
-//                txtCorreo.setText(pasajeroControlDao.getPasajero().getPersonaCuenta().getCorreo());
-//                txtContrasena.setText(pasajeroControlDao.getPasajero().getPersonaCuenta().getContrasena());
-//                cbxRol.setSelectedIndex(pasajeroControlDao.getPasajero().getRolPersona().getId_rol()-1);
-                
-//                cbxTipoIdentificacion.setSelectedIndex(personaControl.getPersona().getTipoDNI());
-//                cbxTipoIdentificacion.setSelectedIndex(personaControl.getPersona().getTipoDNI());
             } 
-            catch (Exception e) {
+            catch (ListaVacia | IndexOutOfBoundsException e) {
                 
             }
         }
     }
     
-    public static void cargarCombosFecha(JComboBox dia, JComboBox mes, JComboBox anio) {
-        dia.removeAllItems();
-        mes.removeAllItems();
-        anio.removeAllItems();
-
-        for (int i = 1; i <= 31; i++) {
-            dia.addItem(i);
-        }
-
-        String[] nombresMeses = new DateFormatSymbols().getMonths();
-
-        for (int i = 0; i < 12; i++) {
-            mes.addItem(nombresMeses[i]);
-        }
-
-        Integer anio_actual = new Date().getYear() + 1900;
-        
-        for (int i = anio_actual; i >= (anio_actual - 100); i--) {
-            anio.addItem(i);
-        }
-    }
+//    public static void cargarCombosFecha(JComboBox dia, JComboBox mes, JComboBox anio) {
+//        dia.removeAllItems();
+//        mes.removeAllItems();
+//        anio.removeAllItems();
+//
+//        for (int i = 1; i <= 31; i++) {
+//            dia.addItem(i);
+//        }
+//
+//        String[] nombresMeses = new DateFormatSymbols().getMonths();
+//
+//        for (int i = 0; i < 12; i++) {
+//            mes.addItem(nombresMeses[i]);
+//        }
+//
+//        Integer anio_actual = new Date().getYear() + 1900;
+//        
+//        for (int i = anio_actual; i >= (anio_actual - 100); i--) {
+//            anio.addItem(i);
+//        }
+//    }
+//    
+//    public static boolean validarFecha(String fecha) {
+//        
+//        try {
+//            SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+//            formatoFecha.setLenient(false);
+//            formatoFecha.parse(fecha);
+//        } 
+//        catch (ParseException e) {
+//            return false;
+//        }
+//        return true;
+//        
+//    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -252,7 +281,6 @@ public class VistaPrincipal extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel19 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
@@ -294,9 +322,10 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblVentas = new javax.swing.JTable();
-        jButton3 = new javax.swing.JButton();
-
-        jLabel19.setText("jLabel19");
+        btnModificar = new javax.swing.JButton();
+        btnElimnar = new javax.swing.JButton();
+        btnSeleccinar = new javax.swing.JButton();
+        btnCalcularVentas = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("VENTA DE BOLETOS");
@@ -347,7 +376,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jLabel20.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel20.setText("INFORMACION BOLETO");
 
-        txtCantidadBoletos.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
+        txtCantidadBoletos.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         txtFechaBoletoSalida.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
@@ -372,15 +401,15 @@ public class VistaPrincipal extends javax.swing.JFrame {
                             .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(cbxDestino, 0, 409, Short.MAX_VALUE)
+                            .addComponent(cbxDestino, 0, 468, Short.MAX_VALUE)
                             .addComponent(cbxHoraSalida, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtNumeroAsientos)
                             .addComponent(txtPrecioUnitario)
                             .addComponent(txtPrecioFinal)
                             .addComponent(txtDescuento)
                             .addComponent(txtCantidadBoletos)
-                            .addComponent(cbxOrigen, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtFechaBoletoSalida))))
+                            .addComponent(txtFechaBoletoSalida)
+                            .addComponent(cbxOrigen, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -446,6 +475,14 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jLabel18.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel18.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel18.setText("Fecha nacimineto");
+
+        txtNumeroDNI.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        txtNombre.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        txtApellido.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        txtTelefono.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         txtFechaNacimiento.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtFechaNacimiento.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -534,10 +571,32 @@ public class VistaPrincipal extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(tblVentas);
 
-        jButton3.setText("MODIFICAR SELECCIONADA");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btnModificar.setText("MODIFICAR SELECCIONADA");
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btnModificarActionPerformed(evt);
+            }
+        });
+
+        btnElimnar.setText("ELIMNAR");
+        btnElimnar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnElimnarActionPerformed(evt);
+            }
+        });
+
+        btnSeleccinar.setText("SELECCIONAR");
+        btnSeleccinar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSeleccinarActionPerformed(evt);
+            }
+        });
+
+        btnCalcularVentas.setText("CALCULAR TOTAL VENTAS");
+        btnCalcularVentas.setToolTipText("");
+        btnCalcularVentas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCalcularVentasActionPerformed(evt);
             }
         });
 
@@ -549,10 +608,16 @@ public class VistaPrincipal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(PanelRegistroVentasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1077, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1130, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PanelRegistroVentasLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton3)))
+                        .addComponent(btnCalcularVentas)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnElimnar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnModificar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnSeleccinar)))
                 .addContainerGap())
         );
         PanelRegistroVentasLayout.setVerticalGroup(
@@ -563,7 +628,11 @@ public class VistaPrincipal extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton3)
+                .addGroup(PanelRegistroVentasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnModificar)
+                    .addComponent(btnElimnar)
+                    .addComponent(btnSeleccinar)
+                    .addComponent(btnCalcularVentas))
                 .addContainerGap())
         );
 
@@ -577,7 +646,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
                     .addComponent(PanelRegistroVentas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
-                        .addGap(0, 952, Short.MAX_VALUE)
+                        .addGap(0, 1005, Short.MAX_VALUE)
                         .addComponent(btnComprarBoleto))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -638,24 +707,117 @@ public class VistaPrincipal extends javax.swing.JFrame {
         } 
         else if (cbxOrigen.getSelectedIndex() == -1) {
             JOptionPane.showMessageDialog(null, "Falta seleccionar combo de origen", "Error", JOptionPane.ERROR_MESSAGE);
-        }
+        } 
         else if (cbxDestino.getSelectedIndex() == -1) {
             JOptionPane.showMessageDialog(null, "Falta seleccionar combo de destino", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-        else if(txtCantidadBoletos.getText().isEmpty()){
+        } 
+        else if (txtCantidadBoletos.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Falta llenar cantidad boletos", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-        else if(txtFechaBoletoSalida.getText().isEmpty()){
+        } 
+        else if (txtFechaBoletoSalida.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Falta llenar fecha salida", "Error", JOptionPane.ERROR_MESSAGE);
-        }
+        } 
         else if (cbxHoraSalida.getSelectedIndex() == -1) {
             JOptionPane.showMessageDialog(null, "Falta seleccionar combo hora salida", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-        else if(txtNumeroAsientos.getText().isEmpty()){
+        } 
+        else if (txtNumeroAsientos.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Falta llenar numero asientos", "Error", JOptionPane.ERROR_MESSAGE);
-        }
+        } 
         else {
             try {
+
+                String Fechasalidaboleto = txtFechaBoletoSalida.getText();
+
+                SimpleDateFormat formatoDeFecha = new SimpleDateFormat("dd/MM/yyyy");
+                String Fe = txtFechaNacimiento.getText();
+                Date fechaSeleccionada = formatoDeFecha.parse(Fe);
+                Date FechaSalidaBoletoV = formatoDeFecha.parse(Fechasalidaboleto);
+
+                int edad = calcularEdad(fechaSeleccionada);
+
+                Date fechaActual = new Date();
+
+                SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                String fechaComoString = formatoFecha.format(fechaActual);
+
+                if (FechaSalidaBoletoV.before(fechaActual)) {
+                    JOptionPane.showMessageDialog(null, "La fecha seleccionada ya ha pasado", "FECHA PASADO", JOptionPane.INFORMATION_MESSAGE);
+                }
+                else {
+                    Float precioUnitario = 15.5f;
+                    String Descuento = "";
+                    if (edad >= 65) {
+                        precioUnitario = precioUnitario * 0.9f;
+                        Descuento = "Aplica descuento 10%";
+                    } else {
+                        Descuento = "No aplica descuentos";
+                    }
+                    Integer IdPersona = ListaPasajero.getLongitud() + 1;
+                    String Origen = cbxOrigen.getSelectedItem().toString();
+                    String Destino = cbxDestino.getSelectedItem().toString();
+                    Integer CantidadBoleto = Integer.parseInt(txtCantidadBoletos.getText());
+                    String FechaSalida = fechaComoString;
+                    String HoraSalida = cbxHoraSalida.getSelectedItem().toString();
+                    String FechaCompra = fechaComoString;
+                    Integer NumeroAsientos = Integer.valueOf(txtNumeroAsientos.getText());
+                    
+                    Float precioFinal = precioUnitario * CantidadBoleto;
+
+                    Boleto BoletoPasajero = new Boleto(IdPersona, Origen, Destino, CantidadBoleto, FechaSalida, HoraSalida, FechaCompra, NumeroAsientos, 15.5f, 14, Descuento, precioFinal);
+
+                    TipoDNI tipoDNI = UtilLista.obtenerTipoDniControl(cbxTipoDni);
+                    String NumeroDNI = txtNumeroDNI.getText();
+                    String NombrePasajero = txtNombre.getText();
+                    String ApellidoPasajero = txtApellido.getText();
+                    String NumeroTelefono = txtTelefono.getText();
+
+                    Pasajero PasajeroGuardar = new Pasajero(IdPersona, tipoDNI, NumeroDNI, NombrePasajero, ApellidoPasajero, NumeroTelefono, edad, BoletoPasajero, Fe);
+
+                    ListaPasajero.Agregar(PasajeroGuardar);
+
+                    Guardar();
+
+                    System.out.println("" + ListaPasajero);
+                }
+            } 
+            catch (ParseException ex) {
+                Logger.getLogger(VistaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            } 
+            catch (ListaVacia ex) {
+                Logger.getLogger(VistaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+
+    }//GEN-LAST:event_btnComprarBoletoActionPerformed
+
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        // TODO add your handling code here:
+        int fila = tblVentas.getSelectedRow();
+        if (fila < 0) {
+            JOptionPane.showMessageDialog(null, "Escoga un registro");
+        } 
+        else {
+            try {
+                
+                
+
+                SimpleDateFormat formatoDeFecha = new SimpleDateFormat("dd/MM/yyyy");
+                String Fe = txtFechaNacimiento.getText();
+                Date fechaSeleccionada = formatoDeFecha.parse(Fe);
+
+                int edad = calcularEdad(fechaSeleccionada);
+                
+                Float precioUnitario = 15.5f;
+                String Descuento = "";
+                if (edad >= 65) {
+                    precioUnitario = precioUnitario * 0.9f;
+                    
+                    Descuento = "Aplica descuento 10%";
+                } 
+                else {
+                    Descuento = "No aplica descuentos";
+                }
                 
                 Date fechaActual = new Date();
 
@@ -665,13 +827,15 @@ public class VistaPrincipal extends javax.swing.JFrame {
                 Integer IdPersona = ListaPasajero.getLongitud() + 1;
                 String Origen = cbxOrigen.getSelectedItem().toString();
                 String Destino = cbxDestino.getSelectedItem().toString();
-                String CantidadBoleto = txtCantidadBoletos.getName();
+                Integer CantidadBoleto = Integer.parseInt(txtCantidadBoletos.getText());
                 String FechaSalida = fechaComoString;
                 String HoraSalida = cbxHoraSalida.getSelectedItem().toString();
                 String FechaCompra = fechaComoString;
                 Integer NumeroAsientos = Integer.valueOf(txtNumeroAsientos.getText());
+                
+                Float precioFinal = precioUnitario * CantidadBoleto;
 
-                Boleto BoletoPasajero = new Boleto(IdPersona, Origen, Destino, CantidadBoleto, FechaSalida, HoraSalida, FechaCompra, NumeroAsientos, 10.0f, 14, 10.0f, 10.0f);
+                Boleto BoletoPasajero = new Boleto(IdPersona, Origen, Destino, CantidadBoleto, FechaSalida, HoraSalida, FechaCompra, NumeroAsientos, 15.5f, 14, Descuento, precioFinal);
 
                 TipoDNI tipoDNI = UtilLista.obtenerTipoDniControl(cbxTipoDni);
                 String NumeroDNI = txtNumeroDNI.getText();
@@ -679,33 +843,19 @@ public class VistaPrincipal extends javax.swing.JFrame {
                 String ApellidoPasajero = txtApellido.getText();
                 String NumeroTelefono = txtTelefono.getText();
 
-                Pasajero PasajeroGuardar = new Pasajero(IdPersona, tipoDNI, NumeroDNI, NombrePasajero, ApellidoPasajero, NumeroTelefono, 20, BoletoPasajero);
+                Pasajero PasajeroM = new Pasajero(IdPersona, tipoDNI, NumeroDNI, NombrePasajero, ApellidoPasajero, NumeroTelefono, edad, BoletoPasajero, Fe);
 
-                ListaPasajero.Agregar(PasajeroGuardar);
+                pasajeroControlDao.Merge(PasajeroM, fila);
 
-                Guardar();
-
-                System.out.println("" + ListaPasajero);
-
+                CargarTabla();
+                Limpiar();
             } 
-            catch (ListaVacia ex) {
-                Logger.getLogger(VistaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-            } 
-            catch (ParseException ex) {
-                Logger.getLogger(VistaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            catch (ListaVacia | NumberFormatException | ParseException e) {
+
             }
         }
-        
-        
-    }//GEN-LAST:event_btnComprarBoletoActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-        int fila = tblVentas.getSelectedRow();
-        CargarVista();
-        
-//        pasajeroControlDao.getListaPasajeros().ModificarInfo(null, fila);
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_btnModificarActionPerformed
 
     private void txtFechaNacimientoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFechaNacimientoKeyTyped
         // TODO add your handling code here:
@@ -724,6 +874,31 @@ public class VistaPrincipal extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_txtFechaNacimientoKeyTyped
+
+    private void btnElimnarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnElimnarActionPerformed
+        // TODO add your handling code here:
+        int fila = tblVentas.getSelectedRow();
+        if (fila < 0) {
+            JOptionPane.showMessageDialog(null, "Escoga un registro");
+        } 
+        else {
+            pasajeroControlDao.Eliminar(fila - 1);
+            CargarTabla();
+        }
+    }//GEN-LAST:event_btnElimnarActionPerformed
+
+    private void btnSeleccinarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccinarActionPerformed
+        // TODO add your handling code here:
+        CargarVista();
+    }//GEN-LAST:event_btnSeleccinarActionPerformed
+
+    private void btnCalcularVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCalcularVentasActionPerformed
+        // TODO add your handling code here:
+        double sumaPrecioFinal = mtv.sumarColumna(16);
+        
+        JOptionPane.showMessageDialog(null, "La suma de todos los voletos vendidos es: $ "+sumaPrecioFinal);
+        
+    }//GEN-LAST:event_btnCalcularVentasActionPerformed
 
     /**
      * @param args the command line arguments
@@ -754,24 +929,28 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
-                try {
-                    new VistaPrincipal().setVisible(true);
-                } catch (ListaVacia ex) {
-                    Logger.getLogger(VistaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-                }
+            try {
+                new VistaPrincipal().setVisible(true);
+            } catch (ListaVacia ex) {
+                Logger.getLogger(VistaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            }
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel PanelRegistroVentas;
+    private javax.swing.JButton btnCalcularVentas;
     private javax.swing.JButton btnComprarBoleto;
+    private javax.swing.JButton btnElimnar;
+    private javax.swing.JButton btnModificar;
+    private javax.swing.JButton btnSeleccinar;
     private javax.swing.JComboBox<String> cbxDestino;
     private javax.swing.JComboBox<String> cbxHoraSalida;
     private javax.swing.JComboBox<String> cbxOrigen;
     private javax.swing.JComboBox<String> cbxTipoDni;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -782,7 +961,6 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;

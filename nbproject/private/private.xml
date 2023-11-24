@@ -3,8 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Users/Victor/Documents/NetBeansProjects/Practica_1_VentaBoletos/src/Modelo/Dao/PasajeroDao.java</file>
+            <file>file:/C:/Users/Victor/Documents/NetBeansProjects/Practica_1_VentaBoletos/src/Modelo/Pasajero.java</file>
             <file>file:/C:/Users/Victor/Documents/NetBeansProjects/Practica_1_VentaBoletos/src/Vista/VistaPrincipal.java</file>
+            <file>file:/C:/Users/Victor/Documents/NetBeansProjects/Practica_1_VentaBoletos/src/Controlador/Dao/DaoImplement.java</file>
             <file>file:/C:/Users/Victor/Documents/NetBeansProjects/Practica_1_VentaBoletos/src/Modelo/Boleto.java</file>
+            <file>file:/C:/Users/Victor/Documents/NetBeansProjects/Practica_1_VentaBoletos/src/Controlador/TDA/Lista/ListaDinamica.java</file>
             <file>file:/C:/Users/Victor/Documents/NetBeansProjects/Practica_1_VentaBoletos/src/Vista/Modelo/ModeloTablaVenta.java</file>
         </group>
     </open-files>

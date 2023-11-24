@@ -136,4 +136,23 @@ public class ModeloTablaVenta extends AbstractTableModel {
                 return null;
         }
     }
+    
+    public double sumarColumna(int columna) {
+        double suma = 0.0;
+
+        for (int fila = 0; fila < getRowCount(); fila++) {
+            try {
+                Object valor = getValueAt(fila, columna);
+
+                if (valor instanceof Number) {
+                    suma += ((Number) valor).doubleValue();
+                }
+            } 
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return suma;
+    }
 }

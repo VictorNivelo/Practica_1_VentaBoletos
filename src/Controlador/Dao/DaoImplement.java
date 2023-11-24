@@ -8,11 +8,13 @@ import Controlador.TDA.Lista.ListaDinamica;
 import com.thoughtworks.xstream.XStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 
 
 /**
  *
  * @author Victor
+ * @param <T>
  */
 public class DaoImplement<T> implements DaoInterface<T>{
     private Class<T> clazz;
@@ -36,7 +38,7 @@ public class DaoImplement<T> implements DaoInterface<T>{
             conection.toXML(ld,new FileWriter(URL));
             return true;
         } 
-        catch (Exception e) {
+        catch (IOException e) {
             return false;
         }
 //        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
@@ -44,8 +46,19 @@ public class DaoImplement<T> implements DaoInterface<T>{
 
     @Override
     public Boolean Merge(T data, Integer index) {
-        
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+        ListaDinamica<T> listaActualizada = all();
+
+        try {
+            listaActualizada.ModificarInfo(data, index);
+
+            conection.toXML(listaActualizada, new FileWriter(URL));
+
+            return true;
+        } 
+        catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
@@ -64,6 +77,21 @@ public class DaoImplement<T> implements DaoInterface<T>{
     @Override
     public T get(Integer id) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public Boolean Eliminar(Integer index) {
+        ListaDinamica<T> listaActualizada = all();
+
+        try {
+            listaActualizada.eliminar(index);
+
+            conection.toXML(listaActualizada, new FileWriter(URL));
+
+            return true;
+        } 
+        catch (Exception e) {
+            return false;
+        }
     }
 //    
 //    public void modificar(T dato, Integer pos) throws FileNotFoundException, JAXBException{

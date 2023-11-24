@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
-  <NonVisualComponents>
-    <Component class="javax.swing.JLabel" name="jLabel19">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="jLabel19"/>
-      </Properties>
-    </Component>
-  </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
     <Property name="title" type="java.lang.String" value="VENTA DE BOLETOS"/>
@@ -55,7 +48,7 @@
                       <Component id="PanelRegistroVentas" max="32767" attributes="0"/>
                       <Component id="jLabel2" alignment="0" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="0" pref="952" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="1005" max="32767" attributes="0"/>
                           <Component id="btnComprarBoleto" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
@@ -128,15 +121,15 @@
                               </Group>
                               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="cbxDestino" alignment="0" pref="409" max="32767" attributes="0"/>
+                                  <Component id="cbxDestino" alignment="0" pref="468" max="32767" attributes="0"/>
                                   <Component id="cbxHoraSalida" alignment="0" max="32767" attributes="0"/>
                                   <Component id="txtNumeroAsientos" alignment="0" max="32767" attributes="0"/>
                                   <Component id="txtPrecioUnitario" alignment="0" max="32767" attributes="0"/>
                                   <Component id="txtPrecioFinal" alignment="0" max="32767" attributes="0"/>
                                   <Component id="txtDescuento" max="32767" attributes="0"/>
                                   <Component id="txtCantidadBoletos" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="cbxOrigen" alignment="0" max="32767" attributes="0"/>
                                   <Component id="txtFechaBoletoSalida" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="cbxOrigen" alignment="0" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -408,7 +401,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="txtCantidadBoletos">
               <Properties>
-                <Property name="horizontalAlignment" type="int" value="11"/>
+                <Property name="horizontalAlignment" type="int" value="0"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="txtFechaBoletoSalida">
@@ -555,12 +548,24 @@
               </AuxValues>
             </Component>
             <Component class="javax.swing.JTextField" name="txtNumeroDNI">
+              <Properties>
+                <Property name="horizontalAlignment" type="int" value="0"/>
+              </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="txtNombre">
+              <Properties>
+                <Property name="horizontalAlignment" type="int" value="0"/>
+              </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="txtApellido">
+              <Properties>
+                <Property name="horizontalAlignment" type="int" value="0"/>
+              </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="txtTelefono">
+              <Properties>
+                <Property name="horizontalAlignment" type="int" value="0"/>
+              </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="txtFechaNacimiento">
               <Properties>
@@ -589,10 +594,16 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jLabel9" max="32767" attributes="0"/>
-                          <Component id="jScrollPane1" pref="1077" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" pref="1130" max="32767" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                              <Component id="jButton3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnCalcularVentas" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="btnElimnar" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="btnModificar" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="btnSeleccinar" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -607,7 +618,12 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jScrollPane1" min="-2" pref="265" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
-                      <Component id="jButton3" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="btnModificar" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnElimnar" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnSeleccinar" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnCalcularVentas" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -639,12 +655,37 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JButton" name="jButton3">
+            <Component class="javax.swing.JButton" name="btnModificar">
               <Properties>
                 <Property name="text" type="java.lang.String" value="MODIFICAR SELECCIONADA"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton3ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnModificarActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="btnElimnar">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="ELIMNAR"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnElimnarActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="btnSeleccinar">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="SELECCIONAR"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSeleccinarActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="btnCalcularVentas">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="CALCULAR TOTAL VENTAS"/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCalcularVentasActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>
