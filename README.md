@@ -6,4 +6,4 @@ Practica de estructura de datos
 Victor Nivelo.
 ```
 ###### En base al TDA desarrollado en la materia de estructura de datos
-![This is an image]([https://github.com/VictorNivelo/Administracion-Hospital/blob/Main/TDA_Estructura_Datos_PF.jpeg](https://github.com/VictorNivelo/Practica_1_VentaBoletos/blob/main/Captura%20de%20pantalla%202023-11-24%20202945.png))
+![This is an image](https://raw.githubusercontent.com/VictorNivelo/Practica_1_VentaBoletos/main/Captura%20de%20pantalla%202023-11-24%20202945.png)
